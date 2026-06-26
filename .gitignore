@@ -1,0 +1,9 @@
+# 调试/临时文件
+_*.png
+_*.pdf
+_*.js
+*.log
+package.json
+package-lock.json
+node_modules/
+.claude/

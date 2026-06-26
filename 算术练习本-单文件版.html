@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#1a1a1a">
+  <title>算术练习本 · A4 打印</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+/* ============================================================
+   算术练习本 · 手写练习本美学
+   设计方向：warm paper · ink + crimson · 手写感 · 移动优先
+   ============================================================ */
+
+:root {
+  /* —— 色彩 —— */
+  --paper: #fdfbf6;          /* 米白纸 */
+  --paper-line: #d9e7d4;     /* 笔记本横线（淡绿） */
+  --ink: #1c1b1a;            /* 墨黑 */
+  --ink-soft: #4a4844;
+  --crimson: #c8324c;        /* 朱红批改色 */
+  --crimson-deep: #8e1f33;
+  --accent: #2d5f3f;         /* 深松绿 */
+  --bg: #1a1a1a;             /* 屏幕深色背景衬托纸张 */
+  --bg-soft: #232323;
+  --panel-bg: #1f1d1b;
+  --line: #3a3835;
+  --muted: #8a857d;
+  --gold: #d4a84b;
+
+  /* —— 字体 —— */
+  --ff-display: "Noto Serif SC", "Songti SC", serif;
+  --ff-hand: "Caveat", "Noto Serif SC", cursive;
+  --ff-mono: "JetBrains Mono", "Courier New", monospace;
+
+  /* —— 尺寸 —— */
+  --paper-w: 210mm;
+  --paper-h: 297mm;
+  --topbar-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--ff-display);
+  background: var(--bg);
+  color: #e8e3da;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* 屏幕背景：细微噪点纹理 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(212,168,75,.04), transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(200,50,76,.03), transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   顶部栏
+   ============================================================ */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  background: rgba(26,26,26,.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+  z-index: 100;
+}
+.topbar-inner {
+  max-width: 1400px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.logo { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.logo-mark {
+  font-family: var(--ff-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+}
+.logo-text h1 {
+  font-family: var(--ff-display);
+  font-size: 16px;
+  font-weight: 900;
+  color: #f5f0e6;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.logo-text p {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.topbar-actions { display: flex; align-items: center; gap: 4px; }
+
+.ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #c8c2b6;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-family: var(--ff-display);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+}
+.ghost-btn:hover:not(:disabled) { background: rgba(255,255,255,.06); border-color: var(--line); }
+.ghost-btn:disabled { opacity: .35; cursor: not-allowed; }
+.ghost-btn svg { flex-shrink: 0; }
+
+.menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 40px; height: 40px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0 9px;
+}
+.menu-btn span {
+  display: block;
+  height: 2px;
+  background: #e8e3da;
+  border-radius: 2px;
+  transition: .25s;
+}
+
+/* ============================================================
+   设置面板（桌面：左侧固定栏 / 移动：抽屉）
+   ============================================================ */
+.panel {
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  background: var(--panel-bg);
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+  z-index: 90;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+.panel-head {
+  position: sticky;
+  top: 0;
+  background: var(--panel-bg);
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+.panel-head h2 {
+  font-family: var(--ff-display);
+  font-size: 15px;
+  font-weight: 900;
+  color: #f5f0e6;
+  letter-spacing: .03em;
+}
+.panel-close {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.panel-body { padding: 16px 20px 40px; }
+
+.field { margin-bottom: 22px; }
+.field-label {
+  display: block;
+  font-family: var(--ff-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .05em;
+  margin-bottom: 9px;
+  text-transform: uppercase;
+}
+.field-label .muted { color: var(--gold); font-weight: 400; text-transform: none; letter-spacing: 0; }
+.field-hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  font-family: var(--ff-mono);
+}
+
+/* 运算类型 chips */
+.op-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.op-chip {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: #b8b2a6;
+  padding: 11px 8px;
+  border-radius: 10px;
+  font-family: var(--ff-display);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+}
+.op-chip:hover { border-color: var(--gold); color: #e8e3da; }
+.op-chip.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #1a1a1a;
+}
+
+/* 分段控件 seg */
+.seg {
+  display: flex;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+.seg-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 8px 6px;
+  border-radius: 7px;
+  font-family: var(--ff-display);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+}
+.seg-btn:hover { color: #e8e3da; }
+.seg-btn.active {
+  background: var(--ink);
+  color: var(--gold);
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+
+/* range slider */
+#perPage {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--line);
+  border-radius: 4px;
+  outline: none;
+}
+#perPage::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px; height: 20px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid var(--panel-bg);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+#perPage::-moz-range-thumb {
+  width: 20px; height: 20px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid var(--panel-bg);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+.range-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* 数字范围输入框 + 快捷按钮 */
+.num-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.num-input {
+  width: 90px;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--gold);
+  font-family: var(--ff-mono);
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px;
+  outline: none;
+  transition: border-color .15s;
+}
+.num-input:focus { border-color: var(--gold); }
+.num-input::-webkit-inner-spin-button,
+.num-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.num-input { -moz-appearance: textfield; }
+
+.quick-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+.quick-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 11px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.quick-btn:hover { border-color: var(--gold); color: #e8e3da; }
+
+/* 开关 switch rows */
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  font-size: 13px;
+  color: #c8c2b6;
+  cursor: pointer;
+}
+.switch {
+  position: relative;
+  width: 38px; height: 22px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--line);
+  border-radius: 22px;
+  cursor: pointer;
+  transition: .2s;
+  flex-shrink: 0;
+}
+.switch::before {
+  content: "";
+  position: absolute;
+  width: 16px; height: 16px;
+  background: #e8e3da;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: .2s;
+}
+.switch:checked { background: var(--accent); }
+.switch:checked::before { transform: translateX(16px); }
+
+/* 主按钮 */
+.primary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--crimson);
+  color: #fff;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-family: var(--ff-display);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: .03em;
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 4px 14px rgba(200,50,76,.3);
+}
+.primary-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(200,50,76,.4); }
+.primary-btn:active { transform: translateY(0); }
+.primary-btn.inline { width: auto; padding: 12px 28px; margin-top: 8px; }
+
+/* ============================================================
+   遮罩
+   ============================================================ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(2px);
+  z-index: 85;
+  opacity: 0;
+  animation: fadeIn .2s forwards;
+}
+
+/* ============================================================
+   主区域
+   ============================================================ */
+.main {
+  margin-left: 300px;
+  padding-top: var(--topbar-h);
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.output {
+  padding: 32px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  max-width: 420px;
+}
+.empty-mark {
+  font-family: var(--ff-mono);
+  font-size: 32px;
+  color: var(--gold);
+  letter-spacing: .3em;
+  margin-bottom: 24px;
+  opacity: .8;
+}
+.empty-state h2 {
+  font-family: var(--ff-display);
+  font-size: 24px;
+  font-weight: 900;
+  color: #f5f0e6;
+  margin-bottom: 10px;
+}
+.empty-state p {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* ============================================================
+   A4 纸张 —— 屏幕所见即打印所得
+   ============================================================ */
+.paper {
+  background: var(--paper);
+  width: var(--paper-w);
+  min-height: var(--paper-h);
+  padding: 24mm 12mm 12mm;  /* 顶部增加留白，让姓名栏往下移 */
+  box-shadow: 0 8px 40px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.3);
+  position: relative;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+
+/* 纸张保持干净，不加横线纹理（避免与答题线冲突、打印干扰） */
+.paper > * { position: relative; }
+
+/* 页眉 */
+.paper-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 7px;
+  margin-bottom: 4px;
+  font-family: var(--ff-display);
+  font-size: 14px;
+  font-weight: 700;
+}
+.underline-field {
+  display: inline-block;
+  min-width: 80px;
+  border-bottom: 1px solid var(--ink);
+}
+.paper-title {
+  text-align: center;
+  font-family: var(--ff-display);
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  margin: 60px 0 34px;
+  color: var(--ink);
+}
+.paper-title .page-no {
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  letter-spacing: 0;
+}
+
+/* 页脚批改信息栏（家长/老师用） */
+.paper-footer {
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--ink-soft);
+  text-align: center;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  letter-spacing: .03em;
+}
+
+/* ============================================================
+   横式题目 —— 操作数固定宽度右对齐，运算符永远居中
+   ============================================================ */
+.grid-horizontal {
+  display: grid;
+  /* 列数由 app.js 内联设置，默认 4 列 */
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px 18px;
+}
+.q-h {
+  font-family: var(--ff-mono);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 0;
+  padding: 6px 0;
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+}
+.q-h .num {
+  color: var(--crimson);
+  font-size: 10px;
+  font-weight: 700;
+  margin-right: 5px;
+  opacity: .7;
+  flex-shrink: 0;
+}
+.q-h .opd {
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.q-h .sign {
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-family: "Segoe UI Symbol", "Cambria Math", "Times New Roman", serif;  /* 比例字体，符号视觉居中 */
+  font-size: 15px;
+  position: relative;
+  top: -1px;            /* 微调符号垂直位置，对齐数字中线 */
+}
+.q-h .eq {
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+/* 答案区：纯空白，无下划线（显示答案时填入数字） */
+.q-h .blank {
+  width: 42px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.q-h .ans {
+  color: var(--crimson-deep);
+  font-weight: 700;
+}
+
+/* ============================================================
+   竖式题目 —— 题号(左上) + 运算符(垂直居中) + 数字列(右对齐)
+   ============================================================ */
+.grid-vertical {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 64px 24px;
+}
+.q-v {
+  font-family: var(--ff-mono);
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: stretch;
+  color: var(--ink);
+  position: relative;
+  padding-top: 18px;       /* 给题号留位置 */
+}
+.q-v .num {
+  color: var(--crimson);
+  font-size: 12px;
+  font-weight: 700;
+  position: absolute;
+  left: 0; top: 0;
+  opacity: .75;
+}
+.q-v .op-col {
+  display: flex;
+  align-items: center;     /* 运算符垂直居中对齐两个数字行中间 */
+  padding-right: 8px;
+  font-weight: 700;
+}
+.q-v .digits {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+}
+.q-v .row-r { text-align: right; padding-right: 2px; }
+.q-v .line {
+  display: block;
+  height: 0;
+  border-top: 1.5px solid var(--ink);
+  margin: 3px 0;
+}
+.q-v .ans {
+  display: block;
+  text-align: right;
+  color: var(--crimson-deep);
+  font-weight: 700;
+  padding-top: 6px;
+}
+
+/* 题目入场动画 */
+@keyframes inkIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.q-h, .q-v { animation: inkIn .25s ease-out both; }
+
+/* ============================================================
+   响应式：平板/手机（≤1024px）—— A4 整体缩放预览
+   ============================================================ */
+@media (max-width: 1024px) {
+  .main { margin-left: 0; }
+  .menu-btn { display: flex; }
+  .panel-close { display: block; }
+  .panel {
+    width: 320px;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 30px rgba(0,0,0,.5);
+  }
+  .panel.open { transform: translateX(0); }
+  .panel[aria-hidden="true"] { transform: translateX(-100%); }
+
+  .logo-text p { display: none; }
+  .ghost-btn .label { display: none; }
+  .ghost-btn { padding: 8px 10px; }
+
+  .output { padding: 12px 0 40px; gap: 14px; }
+
+  /* 窄屏：A4 纸张保持原始尺寸，由 JS updateScale() 整体缩放预览 */
+  /* 打印时不受影响，仍为完整 A4 单页 */
+  .paper-stage {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
+  .paper-scaler {
+    /* transform / width 由 JS 设置 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel { width: 88%; }
+  .menu-btn { width: 36px; height: 36px; }
+}
+
+/* ============================================================
+   打印样式
+   ============================================================ */
+@page {
+  size: A4;
+  margin: 12mm;
+  /* 以下属性可以尽可能清除浏览器默认的页眉页脚区域 */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+
+@media print {
+  html, body { background: #fff; }
+  body::before, .topbar, .panel, .overlay, .menu-btn { display: none !important; }
+
+  .main { margin: 0; padding: 0; }
+  .output { padding: 0; gap: 0; display: block; }
+
+  .empty-state { display: none; }
+
+  /* 关键：还原手机端的缩放，打印必须用原始 A4 尺寸 */
+  .paper-stage {
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+  .paper-scaler {
+    transform: none !important;
+    width: auto !important;
+    display: block !important;
+  }
+
+  .paper {
+    width: 210mm;          /* 打印强制 A4 宽度，不受手机窄视口影响 */
+    min-height: auto;
+    margin: 0;
+    background: #fff !important;   /* 打印用纯白纸，不印米黄底色 */
+    /* 保留 padding 作为纸内边距，让内容不贴边 */
+    box-shadow: none;
+    page-break-after: always;
+    break-after: page;
+  }
+  .paper:last-child { page-break-after: auto; break-after: auto; }
+
+  .q-h .ans, .q-v .ans { color: var(--crimson-deep); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 试卷保持干净，无底部装饰 */
+
+</style>
+</head>
+<body>
+
+  <!-- ============ 顶部栏（始终可见，含移动端菜单触发） ============ -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">
+        <span class="logo-mark">∑</span>
+        <div class="logo-text">
+          <h1>算术练习本</h1>
+          <p>Math Practice · A4 打印</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="btnAnswer" class="ghost-btn" title="显示/隐藏答案" disabled>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span class="label">答案</span>
+        </button>
+        <button id="btnPrint" class="ghost-btn" title="打印 / 导出 PDF" disabled>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span class="label">打印</span>
+        </button>
+        <button id="btnPrintAns" class="ghost-btn" title="打印带答案版（供家长批改）" disabled>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span class="label">答案版</span>
+        </button>
+        <button id="btnMenu" class="menu-btn" aria-label="设置">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 设置面板（桌面侧栏 / 移动端抽屉） ============ -->
+  <aside id="panel" class="panel" aria-hidden="false">
+    <div class="panel-head">
+      <h2>出题设置</h2>
+      <button id="panelClose" class="panel-close" aria-label="关闭">×</button>
+    </div>
+
+    <div class="panel-body">
+      <!-- 运算类型 -->
+      <div class="field">
+        <label class="field-label">运算类型</label>
+        <div class="op-chips" id="opChips">
+          <button class="op-chip active" data-op="add">＋ 加</button>
+          <button class="op-chip active" data-op="sub">－ 减</button>
+          <button class="op-chip" data-op="mul">× 乘</button>
+          <button class="op-chip" data-op="div">÷ 除</button>
+        </div>
+      </div>
+
+      <!-- 数字范围上限 -->
+      <div class="field">
+        <label class="field-label" for="maxNum">数字范围上限 <span class="muted">（数字与结果均不超过此值）</span></label>
+        <div class="num-input-row">
+          <input type="number" id="maxNum" value="10" min="2" max="99999" class="num-input">
+          <div class="quick-btns">
+            <button type="button" class="quick-btn" data-val="10">10</button>
+            <button type="button" class="quick-btn" data-val="20">20</button>
+            <button type="button" class="quick-btn" data-val="50">50</button>
+            <button type="button" class="quick-btn" data-val="100">100</button>
+          </div>
+        </div>
+        <p class="field-hint">如 10 = 10以内口算，20 = 20以内，100 = 100以内</p>
+      </div>
+
+      <!-- 题型 -->
+      <div class="field">
+        <label class="field-label">题型</label>
+        <div class="seg" id="formSeg">
+          <button class="seg-btn active" data-form="horizontal">横式口算</button>
+          <button class="seg-btn" data-form="vertical">竖式列式</button>
+        </div>
+      </div>
+
+      <!-- 行数 -->
+      <div class="field">
+        <label class="field-label" for="perPage">每页行数 <span class="muted" id="rowsMeta">＝ 64 题</span></label>
+        <input type="range" id="perPage" min="12" max="24" step="2" value="16">
+        <div class="range-ticks"><span>少</span><span>多</span></div>
+      </div>
+
+      <!-- 页数 -->
+      <div class="field">
+        <label class="field-label" for="pages">页数</label>
+        <div class="seg" id="pagesSeg">
+          <button class="seg-btn active" data-pages="1">1</button>
+          <button class="seg-btn" data-pages="2">2</button>
+          <button class="seg-btn" data-pages="3">3</button>
+          <button class="seg-btn" data-pages="5">5</button>
+        </div>
+      </div>
+
+      <!-- 选项 -->
+      <div class="field">
+        <label class="field-label">约束</label>
+        <label class="switch-row">
+          <span>减法结果不为负</span>
+          <input type="checkbox" id="noNegative" checked class="switch">
+        </label>
+        <label class="switch-row">
+          <span>除法允许有余数</span>
+          <input type="checkbox" id="allowRemainder" checked class="switch">
+        </label>
+        <label class="switch-row">
+          <span>姓名/日期/得分栏</span>
+          <input type="checkbox" id="showName" checked class="switch">
+        </label>
+      </div>
+
+      <button id="generate" class="primary-btn">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        生成新卷
+      </button>
+    </div>
+  </aside>
+
+  <!-- 移动端遮罩 -->
+  <div id="overlay" class="overlay" hidden></div>
+
+  <!-- ============ 主区域 ============ -->
+  <main class="main">
+    <div id="output" class="output"></div>
+  </main>
+
+  <script>
+/* ============================================================ * 算术练习本 · app.js * 题目生成 + 渲染 + 响应式缩放 + 抽屉交互 * ============================================================ */ (function () { "use strict";
+
+// ---------- 数字范围上限 N（用户输入，默认 10） ----------
+// 语义：所有数字和结果都不超过 N
+//   10 → 10以内口算；20 → 20以内；100 → 100以内
+
+// 横式列数：按 N 自适应（数字越长列越少，避免溢出）
+function hColsByMax(maxN) {
+  if (maxN <= 20) return 5;
+  if (maxN <= 100) return 4;
+  if (maxN <= 1000) return 4;
+  return 3;
+}
+
+// 竖式固定 4列×4行=16题（宽松，留足列式书写空间）
+const VERTICAL_PER_PAGE = 16;
+const OPS = { add: "+", sub: "−", mul: "×", div: "÷" };
+
+// ---------- 工具 ----------
+const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+// ---------- 生成单题（基于上限 maxN，结果不超过 maxN） ----------
+function makeQuestion(type, maxN, opts) {
+    let a, b, answer, remainder = 0;
+    if (type === "add") {
+        // a + b ≤ maxN
+        a = rand(1, maxN - 1);
+        b = rand(1, maxN - a);
+        answer = a + b;
+    } else if (type === "sub") {
+        // a ≥ b，结果 ≥ 0
+        a = rand(1, maxN);
+        b = rand(1, a);
+        if (a === b) a = Math.min(maxN, a + 1); // 尽量避免结果为 0
+        answer = a - b;
+    } else if (type === "mul") {
+        // a × b ≤ maxN
+        a = rand(1, maxN);
+        b = a > 0 ? rand(1, Math.floor(maxN / a)) : 1;
+        if (b < 1) b = 1;
+        answer = a * b;
+    } else {
+        // 除法：结果（商）≤ maxN，被除数 ≤ maxN，保证 b≥2
+        // 先定除数 b（≥2），商上限 = floor(maxN/b)
+        b = rand(2, maxN);
+        const qMax = Math.max(1, Math.floor(maxN / b));
+        const q = rand(1, qMax);
+        if (opts.allowRemainder) {
+            const room = maxN - q * b;
+            remainder = room > 0 ? rand(0, Math.min(room, b - 1)) : 0;
+        }
+        a = q * b + remainder;
+        answer = q;
+    }
+    return { type, a, b, answer, remainder };
+}
+
+// 题目的唯一标识（用于去重）：同类型 + 同操作数 = 同一道题
+function qKey(q) {
+    return q.type + ":" + q.a + "," + q.b;
+}
+
+function generateAll(types, maxN, perPage, pages, opts) {
+    const list = [];
+    if (types.length === 0) return list;
+    const total = perPage * pages;
+    const seen = new Set();   // 已生成题目，避免重复
+    let fail = 0;             // 连续去重失败计数，防止 maxN 太小时死循环
+    while (list.length < total && fail < 200) {
+        const q = makeQuestion(types[rand(0, types.length - 1)], maxN, opts);
+        const k = qKey(q);
+        if (seen.has(k)) { fail++; continue; }
+        seen.add(k);
+        list.push(q);
+        fail = 0;
+    }
+    // 打乱
+    for (let i = list.length - 1; i > 0; i--) {
+        const j = rand(0, i);
+        [list[i], list[j]] = [list[j], list[i]];
+    }
+    return list;
+}
+
+// 操作数对齐改用 CSS 固定宽度盒子（见 renderHorizontal 的 .opd），不再用空格补齐
+
+// ---------- 渲染单题 ---------- 
+function renderHorizontal(q, idx, showAnswer) { 
+    const sign = OPS[q.type]; 
+    let ans = ""; 
+    if (showAnswer) { 
+        ans = (q.type === "div" && q.remainder > 0) ? `<span class="ans">${q.answer}…${q.remainder}</span>` : `<span class="ans">${q.answer}</span>`; 
+    } 
+    const delay = Math.min(idx * 0.006, 0.4); 
+    // 操作数用固定宽度的右对齐盒子，运算符在中间，无论几位数都居中
+    return `<div class="q-h" style="animation-delay:${delay}s"><span class="num">${idx}.</span><span class="opd">${q.a}</span><span class="sign">${sign}</span><span class="opd">${q.b}</span><span class="eq">=</span><span class="blank">${ans}</span></div>`; 
+} 
+
+function renderVertical(q, idx, showAnswer) { 
+    const sign = OPS[q.type]; 
+    let ans = ""; 
+    if (showAnswer) { 
+        ans = (q.type === "div" && q.remainder > 0) ? `<span class="ans">${q.answer} 余 ${q.remainder}</span>` : `<span class="ans">${q.answer}</span>`; 
+    } 
+    const delay = Math.min(idx * 0.02, 0.4); 
+    return `<div class="q-v" style="animation-delay:${delay}s"> <span class="num">${idx}.</span> <span class="op-col"><span class="op-sign">${sign}</span></span> <span class="digits"> <span class="row-r">${q.a}</span> <span class="row-r">${q.b}</span> <span class="line"></span>${ans} </span> </div>`; 
+} 
+
+function renderPaper(questions, start, perPage, form, cols, showAnswer, showMeta, pageNo, totalPages) { 
+    const slice = questions.slice(start, start + perPage); 
+    const isVertical = form === "vertical"; 
+    let items = ""; 
+    slice.forEach((q, i) => { 
+        items += isVertical ? renderVertical(q, start + i + 1, showAnswer) : renderHorizontal(q, start + i + 1, showAnswer); 
+    }); 
+    const gridClass = isVertical ? "grid-vertical" : "grid-horizontal"; 
+    const gridStyle = isVertical ? "" : ` style="grid-template-columns: repeat(${cols}, 1fr)"`; 
+    let meta = ""; 
+    if (showMeta) { 
+        meta = `<div class="paper-header"> <span>姓名：<span class="underline-field">&nbsp;</span></span> <span>日期：<span class="underline-field">&nbsp;</span></span> <span>得分：<span class="underline-field">&nbsp;</span></span> </div>`; 
+    }
+    // 页脚批改栏：统计题数 + 三档建议用时（从容/标准/挑战）
+    // 按小学生真实节奏：含读题+思考+手写数字
+    //   横式口算：加减 12 秒/题，乘除 18 秒/题
+    //   竖式手写：在横式基础上 ×2.5（要列竖式、算进退位，更慢）
+    //   位数为 3 位以上再加成（多位数书写更费时）
+    const qCount = slice.length;
+    const digitsOf = (n) => String(n).length;
+    const formFactor = isVertical ? 2.5 : 1;
+    const baseSecs = slice.reduce((s, q) => {
+        const base = (q.type === "mul" || q.type === "div") ? 18 : 12;
+        const maxD = Math.max(digitsOf(q.a), digitsOf(q.b), digitsOf(q.answer));
+        const digitExtra = maxD >= 3 ? (maxD - 2) * 4 : 0; // 3位以上每多1位+4秒
+        return s + (base + digitExtra) * formFactor;
+    }, 0);
+    const toMin = (k) => Math.max(1, Math.round(baseSecs * k / 60));
+    const footer = `<div class="paper-footer">本页 ${qCount} 题 · 用时参考：从容 ${toMin(1.6)} 分 / 标准 ${toMin(1.0)} 分 / 挑战 ${toMin(0.7)} 分</div>`;
+    const title = isVertical ? "竖式计算练习" : "四则运算口算练习"; 
+    return `<section class="paper"> ${meta} <div class="paper-title">${title}<br><span class="page-no">第 ${pageNo} / ${totalPages} 页</span></div> <div class="${gridClass}"${gridStyle}>${items}</div> ${footer} </section>`; 
+} 
+
+// ============================================================ // 状态 // ============================================================ 
+const state = { questions: [], showAnswer: false, form: "horizontal", perPage: 80, cols: 5, pages: 1, showMeta: true }; 
+
+// ============================================================ // 读取配置 // ============================================================ 
+function readConfig() { 
+    const types = Array.from(document.querySelectorAll(".op-chip.active")).map(el => el.dataset.op); 
+    let maxN = parseInt(document.getElementById("maxNum").value, 10); 
+    if (!maxN || maxN < 2) maxN = 10;   // 容错：无效值回退默认 10
+    if (maxN > 99999) maxN = 99999;
+    const form = document.querySelector("#formSeg .active").dataset.form; 
+    const pages = parseInt(document.querySelector("#pagesSeg .active").dataset.pages, 10); 
+    const rows = parseInt(document.getElementById("perPage").value, 10); 
+    const opts = { noNegative: document.getElementById("noNegative").checked, allowRemainder: document.getElementById("allowRemainder").checked, }; 
+    const showMeta = document.getElementById("showName").checked; 
+    if (form === "vertical") { return { types, maxN, form, perPage: VERTICAL_PER_PAGE, cols: 4, pages, opts, showMeta }; } 
+    const cols = hColsByMax(maxN); 
+    return { types, maxN, form, perPage: cols * rows, cols, pages, opts, showMeta }; 
+} 
+
+// ============================================================ // 渲染 // ============================================================ 
+function regenerate() { 
+    const cfg = readConfig(); 
+    if (cfg.types.length === 0) { flashTip("请至少选择一种运算类型"); return; } 
+    state.questions = generateAll(cfg.types, cfg.maxN, cfg.perPage, cfg.pages, cfg.opts);
+    state.form = cfg.form; state.perPage = cfg.perPage; state.cols = cfg.cols; state.pages = cfg.pages; state.showMeta = cfg.showMeta; 
+    render(); 
+    // 关闭抽屉（移动端） 
+    closePanel(); 
+    // 滚动到顶部 
+    document.querySelector(".main").scrollIntoView({ behavior: "smooth", block: "start" }); 
+} 
+
+function render() { 
+    const output = document.getElementById("output"); 
+    enableActions(state.questions.length > 0); 
+    if (state.questions.length === 0) { output.innerHTML = ""; return; }
+    // 所有设备：A4 纸张整体缩放预览（手机缩小看大概，打印保持 A4 完整单页）
+    const isMobile = window.matchMedia("(max-width: 1024px)").matches;
+    let html = ""; 
+    for (let p = 0; p < state.pages; p++) { 
+        const start = p * state.perPage; 
+        html += renderPaper(state.questions, start, state.perPage, state.form, state.cols, state.showAnswer, state.showMeta, p + 1, state.pages); 
+    } 
+    if (isMobile) {
+        output.innerHTML = `<div class="paper-stage"><div class="paper-scaler">${html}</div></div>`;
+    } else {
+        output.innerHTML = html;
+    }
+    updateScale();
+    updateAnswerBtn(); 
+} 
+
+function enableActions(on) { 
+    document.getElementById("btnPrint").disabled = !on; 
+    document.getElementById("btnPrintAns").disabled = !on; 
+    document.getElementById("btnAnswer").disabled = !on; 
+} 
+
+function updateAnswerBtn() { 
+    const btn = document.getElementById("btnAnswer"); 
+    const label = btn.querySelector(".label"); 
+    if (label) label.textContent = state.showAnswer ? "隐藏" : "答案"; 
+}
+
+// ---------- A4 整体缩放预览（窄屏：缩小看大概；打印保持 A4 完整） ----------
+// 结构：.paper-stage (定尺寸，参与文档流) > .paper-scaler (transform scale) > .paper
+function updateScale() {
+    const stage = document.querySelector(".paper-stage");
+    if (!stage) return;
+    const scaler = stage.querySelector(".paper-scaler");
+    const papers = stage.querySelectorAll(".paper");
+    if (!scaler || papers.length === 0) return;
+
+    const PAPER_W = 794; // 210mm @96dpi
+    const avail = window.innerWidth - 24;
+    const scale = Math.min(1, avail / PAPER_W);
+
+    scaler.style.transform = `scale(${scale})`;
+    scaler.style.transformOrigin = "top center";
+    scaler.style.width = PAPER_W + "px";
+
+    // 多张纸：累加高度，外层 stage 占用缩放后的总高度
+    let totalH = 0;
+    papers.forEach(p => totalH += p.offsetHeight + 28); // 28 = margin-bottom
+    stage.style.width = "100%";
+    stage.style.height = (totalH * scale) + "px";
+    stage.style.overflow = "hidden";
+}
+
+// ============================================================ // 抽屉（移动端设置面板） // ============================================================
+function openPanel() { 
+    const panel = document.getElementById("panel"); 
+    const overlay = document.getElementById("overlay"); 
+    panel.classList.add("open"); 
+    panel.setAttribute("aria-hidden", "false"); 
+    overlay.hidden = false; 
+} 
+
+function closePanel() { 
+    const panel = document.getElementById("panel"); 
+    const overlay = document.getElementById("overlay"); 
+    panel.classList.remove("open"); 
+    panel.setAttribute("aria-hidden", "true"); 
+    overlay.hidden = true; 
+} 
+
+// ---------- 轻提示 ---------- 
+let tipTimer; 
+function flashTip(msg) { 
+    let tip = document.getElementById("flashTip"); 
+    if (!tip) { 
+        tip = document.createElement("div"); 
+        tip.id = "flashTip"; 
+        tip.style.cssText = "position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#c8324c;color:#fff;padding:10px 20px;border-radius:10px;z-index:200;font-size:14px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.3)"; 
+        document.body.appendChild(tip); 
+    } 
+    tip.textContent = msg; tip.style.opacity = "1"; 
+    clearTimeout(tipTimer); 
+    tipTimer = setTimeout(() => { tip.style.opacity = "0"; }, 2000); 
+} 
+
+// ============================================================ // 交互绑定 // ============================================================ 
+function bindUI() { 
+    // 运算 chips 
+    document.getElementById("opChips").addEventListener("click", e => { 
+        const chip = e.target.closest(".op-chip"); 
+        if (!chip) return; 
+        chip.classList.toggle("active"); 
+    }); 
+
+    // 数字范围快捷按钮 + 输入联动
+    const maxInput = document.getElementById("maxNum");
+    document.querySelector(".quick-btns").addEventListener("click", e => {
+        const btn = e.target.closest(".quick-btn");
+        if (!btn) return;
+        maxInput.value = btn.dataset.val;
+        updateRowsMeta();
+    });
+    maxInput.addEventListener("input", updateRowsMeta);
+
+    // 分段控件通用
+    document.querySelectorAll(".seg").forEach(seg => { 
+        seg.addEventListener("click", e => { 
+            const btn = e.target.closest(".seg-btn"); 
+            if (!btn) return; 
+            seg.querySelectorAll(".seg-btn").forEach(b => b.classList.remove("active")); 
+            btn.classList.add("active"); 
+        }); 
+    }); 
+    // 行数 slider 联动 meta 
+    const slider = document.getElementById("perPage"); 
+    slider.addEventListener("input", updateRowsMeta); 
+    // 生成 
+    document.getElementById("generate").addEventListener("click", regenerate); 
+    // 答案切换 
+    document.getElementById("btnAnswer").addEventListener("click", () => { 
+        if (!state.questions.length) return; 
+        state.showAnswer = !state.showAnswer; render(); 
+    }); 
+    // 打印
+    document.getElementById("btnPrint").addEventListener("click", () => {
+        if (!state.questions.length) { flashTip("请先生成题目"); return; } window.print();
+    });
+    // 一键打印答案版：临时显示答案 → 打印 → 恢复原状
+    document.getElementById("btnPrintAns").addEventListener("click", () => {
+        if (!state.questions.length) { flashTip("请先生成题目"); return; }
+        const wasShown = state.showAnswer;
+        if (!wasShown) { state.showAnswer = true; render(); }
+        // 打印完成后恢复
+        const afterPrint = () => {
+            if (!wasShown) { state.showAnswer = false; render(); }
+            window.removeEventListener("afterprint", afterPrint);
+        };
+        window.addEventListener("afterprint", afterPrint);
+        // 兜底：有些浏览器不触发 afterprint，1.5 秒后也恢复
+        setTimeout(() => { if (!wasShown && state.showAnswer) { state.showAnswer = false; render(); } }, 1500);
+        window.print();
+    });
+    // 抽屉
+    document.getElementById("btnMenu").addEventListener("click", openPanel); 
+    document.getElementById("panelClose").addEventListener("click", closePanel); 
+    document.getElementById("overlay").addEventListener("click", closePanel); 
+    // 窗口尺寸变化 → 重新渲染（切换 paper-stage 包裹）+ 重算缩放 
+    let resizeTimer; 
+    window.addEventListener("resize", () => { 
+        clearTimeout(resizeTimer); 
+        resizeTimer = setTimeout(() => { 
+            if (state.questions.length) render(); 
+            else updateScale(); 
+        }, 150); 
+    }); 
+} 
+
+function updateRowsMeta() { 
+    const maxN = parseInt(document.getElementById("maxNum").value, 10) || 10; 
+    const form = document.querySelector("#formSeg .active").dataset.form; 
+    const rows = parseInt(document.getElementById("perPage").value, 10); 
+    const meta = document.getElementById("rowsMeta"); 
+    if (form === "vertical") { meta.textContent = "＝ 竖式固定"; } 
+    else { meta.textContent = `＝ ${hColsByMax(maxN) * rows} 题`; } 
+} 
+
+// 初始化：直接生成一卷，无需空状态 
+bindUI(); updateRowsMeta(); 
+// 支持 ?preview=vertical 直接出竖式（便于测试/截图） 
+const pv = new URLSearchParams(location.search).get("preview"); 
+if (pv === "vertical") { 
+    document.querySelector('#formSeg [data-form="vertical"]').classList.add("active"); 
+    document.querySelector('#formSeg [data-form="horizontal"]').classList.remove("active"); 
+} 
+regenerate(); 
+})();
+
+</script>
+</body>
+</html>

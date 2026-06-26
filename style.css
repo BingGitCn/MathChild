@@ -1,0 +1,733 @@
+/* ============================================================
+   算术练习本 · 手写练习本美学
+   设计方向：warm paper · ink + crimson · 手写感 · 移动优先
+   ============================================================ */
+
+:root {
+  /* —— 色彩 —— */
+  --paper: #fdfbf6;          /* 米白纸 */
+  --paper-line: #d9e7d4;     /* 笔记本横线（淡绿） */
+  --ink: #1c1b1a;            /* 墨黑 */
+  --ink-soft: #4a4844;
+  --crimson: #c8324c;        /* 朱红批改色 */
+  --crimson-deep: #8e1f33;
+  --accent: #2d5f3f;         /* 深松绿 */
+  --bg: #1a1a1a;             /* 屏幕深色背景衬托纸张 */
+  --bg-soft: #232323;
+  --panel-bg: #1f1d1b;
+  --line: #3a3835;
+  --muted: #8a857d;
+  --gold: #d4a84b;
+
+  /* —— 字体 —— */
+  --ff-display: "Noto Serif SC", "Songti SC", serif;
+  --ff-hand: "Caveat", "Noto Serif SC", cursive;
+  --ff-mono: "JetBrains Mono", "Courier New", monospace;
+
+  /* —— 尺寸 —— */
+  --paper-w: 210mm;
+  --paper-h: 297mm;
+  --topbar-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--ff-display);
+  background: var(--bg);
+  color: #e8e3da;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* 屏幕背景：细微噪点纹理 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(212,168,75,.04), transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(200,50,76,.03), transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   顶部栏
+   ============================================================ */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  background: rgba(26,26,26,.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+  z-index: 100;
+}
+.topbar-inner {
+  max-width: 1400px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.logo { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.logo-mark {
+  font-family: var(--ff-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+}
+.logo-text h1 {
+  font-family: var(--ff-display);
+  font-size: 16px;
+  font-weight: 900;
+  color: #f5f0e6;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.logo-text p {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.topbar-actions { display: flex; align-items: center; gap: 4px; }
+
+.ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #c8c2b6;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-family: var(--ff-display);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+}
+.ghost-btn:hover:not(:disabled) { background: rgba(255,255,255,.06); border-color: var(--line); }
+.ghost-btn:disabled { opacity: .35; cursor: not-allowed; }
+.ghost-btn svg { flex-shrink: 0; }
+
+.menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 40px; height: 40px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0 9px;
+}
+.menu-btn span {
+  display: block;
+  height: 2px;
+  background: #e8e3da;
+  border-radius: 2px;
+  transition: .25s;
+}
+
+/* ============================================================
+   设置面板（桌面：左侧固定栏 / 移动：抽屉）
+   ============================================================ */
+.panel {
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  background: var(--panel-bg);
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+  z-index: 90;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+.panel-head {
+  position: sticky;
+  top: 0;
+  background: var(--panel-bg);
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+.panel-head h2 {
+  font-family: var(--ff-display);
+  font-size: 15px;
+  font-weight: 900;
+  color: #f5f0e6;
+  letter-spacing: .03em;
+}
+.panel-close {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.panel-body { padding: 16px 20px 40px; }
+
+.field { margin-bottom: 22px; }
+.field-label {
+  display: block;
+  font-family: var(--ff-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .05em;
+  margin-bottom: 9px;
+  text-transform: uppercase;
+}
+.field-label .muted { color: var(--gold); font-weight: 400; text-transform: none; letter-spacing: 0; }
+.field-hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  font-family: var(--ff-mono);
+}
+
+/* 运算类型 chips */
+.op-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.op-chip {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: #b8b2a6;
+  padding: 11px 8px;
+  border-radius: 10px;
+  font-family: var(--ff-display);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+}
+.op-chip:hover { border-color: var(--gold); color: #e8e3da; }
+.op-chip.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #1a1a1a;
+}
+
+/* 分段控件 seg */
+.seg {
+  display: flex;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+.seg-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 8px 6px;
+  border-radius: 7px;
+  font-family: var(--ff-display);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+}
+.seg-btn:hover { color: #e8e3da; }
+.seg-btn.active {
+  background: var(--ink);
+  color: var(--gold);
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+
+/* range slider */
+#perPage {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--line);
+  border-radius: 4px;
+  outline: none;
+}
+#perPage::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px; height: 20px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid var(--panel-bg);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+#perPage::-moz-range-thumb {
+  width: 20px; height: 20px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid var(--panel-bg);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+.range-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* 数字范围输入框 + 快捷按钮 */
+.num-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.num-input {
+  width: 90px;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--gold);
+  font-family: var(--ff-mono);
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px;
+  outline: none;
+  transition: border-color .15s;
+}
+.num-input:focus { border-color: var(--gold); }
+.num-input::-webkit-inner-spin-button,
+.num-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.num-input { -moz-appearance: textfield; }
+
+.quick-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+.quick-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 11px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.quick-btn:hover { border-color: var(--gold); color: #e8e3da; }
+
+/* 开关 switch rows */
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  font-size: 13px;
+  color: #c8c2b6;
+  cursor: pointer;
+}
+.switch {
+  position: relative;
+  width: 38px; height: 22px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--line);
+  border-radius: 22px;
+  cursor: pointer;
+  transition: .2s;
+  flex-shrink: 0;
+}
+.switch::before {
+  content: "";
+  position: absolute;
+  width: 16px; height: 16px;
+  background: #e8e3da;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: .2s;
+}
+.switch:checked { background: var(--accent); }
+.switch:checked::before { transform: translateX(16px); }
+
+/* 主按钮 */
+.primary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--crimson);
+  color: #fff;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-family: var(--ff-display);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: .03em;
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 4px 14px rgba(200,50,76,.3);
+}
+.primary-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(200,50,76,.4); }
+.primary-btn:active { transform: translateY(0); }
+.primary-btn.inline { width: auto; padding: 12px 28px; margin-top: 8px; }
+
+/* ============================================================
+   遮罩
+   ============================================================ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(2px);
+  z-index: 85;
+  opacity: 0;
+  animation: fadeIn .2s forwards;
+}
+
+/* ============================================================
+   主区域
+   ============================================================ */
+.main {
+  margin-left: 300px;
+  padding-top: var(--topbar-h);
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.output {
+  padding: 32px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  max-width: 420px;
+}
+.empty-mark {
+  font-family: var(--ff-mono);
+  font-size: 32px;
+  color: var(--gold);
+  letter-spacing: .3em;
+  margin-bottom: 24px;
+  opacity: .8;
+}
+.empty-state h2 {
+  font-family: var(--ff-display);
+  font-size: 24px;
+  font-weight: 900;
+  color: #f5f0e6;
+  margin-bottom: 10px;
+}
+.empty-state p {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* ============================================================
+   A4 纸张 —— 屏幕所见即打印所得
+   ============================================================ */
+.paper {
+  background: var(--paper);
+  width: var(--paper-w);
+  min-height: var(--paper-h);
+  padding: 24mm 12mm 12mm;  /* 顶部增加留白，让姓名栏往下移 */
+  box-shadow: 0 8px 40px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.3);
+  position: relative;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+
+/* 纸张保持干净，不加横线纹理（避免与答题线冲突、打印干扰） */
+.paper > * { position: relative; }
+
+/* 页眉 */
+.paper-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 7px;
+  margin-bottom: 4px;
+  font-family: var(--ff-display);
+  font-size: 14px;
+  font-weight: 700;
+}
+.underline-field {
+  display: inline-block;
+  min-width: 80px;
+  border-bottom: 1px solid var(--ink);
+}
+.paper-title {
+  text-align: center;
+  font-family: var(--ff-display);
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  margin: 60px 0 34px;
+  color: var(--ink);
+}
+.paper-title .page-no {
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  letter-spacing: 0;
+}
+
+/* 页脚批改信息栏（家长/老师用） */
+.paper-footer {
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--ink-soft);
+  text-align: center;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  letter-spacing: .03em;
+}
+
+/* ============================================================
+   横式题目 —— 操作数固定宽度右对齐，运算符永远居中
+   ============================================================ */
+.grid-horizontal {
+  display: grid;
+  /* 列数由 app.js 内联设置，默认 4 列 */
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px 18px;
+}
+.q-h {
+  font-family: var(--ff-mono);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 0;
+  padding: 6px 0;
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+}
+.q-h .num {
+  color: var(--crimson);
+  font-size: 10px;
+  font-weight: 700;
+  margin-right: 5px;
+  opacity: .7;
+  flex-shrink: 0;
+}
+.q-h .opd {
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.q-h .sign {
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-family: "Segoe UI Symbol", "Cambria Math", "Times New Roman", serif;  /* 比例字体，符号视觉居中 */
+  font-size: 15px;
+  position: relative;
+  top: -1px;            /* 微调符号垂直位置，对齐数字中线 */
+}
+.q-h .eq {
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+/* 答案区：纯空白，无下划线（显示答案时填入数字） */
+.q-h .blank {
+  width: 42px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.q-h .ans {
+  color: var(--crimson-deep);
+  font-weight: 700;
+}
+
+/* ============================================================
+   竖式题目 —— 题号(左上) + 运算符(垂直居中) + 数字列(右对齐)
+   ============================================================ */
+.grid-vertical {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 64px 24px;
+}
+.q-v {
+  font-family: var(--ff-mono);
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: stretch;
+  color: var(--ink);
+  position: relative;
+  padding-top: 18px;       /* 给题号留位置 */
+}
+.q-v .num {
+  color: var(--crimson);
+  font-size: 12px;
+  font-weight: 700;
+  position: absolute;
+  left: 0; top: 0;
+  opacity: .75;
+}
+.q-v .op-col {
+  display: flex;
+  align-items: center;     /* 运算符垂直居中对齐两个数字行中间 */
+  padding-right: 8px;
+  font-weight: 700;
+}
+.q-v .digits {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+}
+.q-v .row-r { text-align: right; padding-right: 2px; }
+.q-v .line {
+  display: block;
+  height: 0;
+  border-top: 1.5px solid var(--ink);
+  margin: 3px 0;
+}
+.q-v .ans {
+  display: block;
+  text-align: right;
+  color: var(--crimson-deep);
+  font-weight: 700;
+  padding-top: 6px;
+}
+
+/* 题目入场动画 */
+@keyframes inkIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.q-h, .q-v { animation: inkIn .25s ease-out both; }
+
+/* ============================================================
+   响应式：平板/手机（≤1024px）—— A4 整体缩放预览
+   ============================================================ */
+@media (max-width: 1024px) {
+  .main { margin-left: 0; }
+  .menu-btn { display: flex; }
+  .panel-close { display: block; }
+  .panel {
+    width: 320px;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 30px rgba(0,0,0,.5);
+  }
+  .panel.open { transform: translateX(0); }
+  .panel[aria-hidden="true"] { transform: translateX(-100%); }
+
+  .logo-text p { display: none; }
+  .ghost-btn .label { display: none; }
+  .ghost-btn { padding: 8px 10px; }
+
+  .output { padding: 12px 0 40px; gap: 14px; }
+
+  /* 窄屏：A4 纸张保持原始尺寸，由 JS updateScale() 整体缩放预览 */
+  /* 打印时不受影响，仍为完整 A4 单页 */
+  .paper-stage {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
+  .paper-scaler {
+    /* transform / width 由 JS 设置 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel { width: 88%; }
+  .menu-btn { width: 36px; height: 36px; }
+}
+
+/* ============================================================
+   打印样式
+   ============================================================ */
+@page {
+  size: A4;
+  margin: 12mm;
+  /* 以下属性可以尽可能清除浏览器默认的页眉页脚区域 */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+
+@media print {
+  html, body { background: #fff; }
+  body::before, .topbar, .panel, .overlay, .menu-btn { display: none !important; }
+
+  .main { margin: 0; padding: 0; }
+  .output { padding: 0; gap: 0; display: block; }
+
+  .empty-state { display: none; }
+
+  /* 关键：还原手机端的缩放，打印必须用原始 A4 尺寸 */
+  .paper-stage {
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+  .paper-scaler {
+    transform: none !important;
+    width: auto !important;
+    display: block !important;
+  }
+
+  .paper {
+    width: 210mm;          /* 打印强制 A4 宽度，不受手机窄视口影响 */
+    min-height: auto;
+    margin: 0;
+    background: #fff !important;   /* 打印用纯白纸，不印米黄底色 */
+    /* 保留 padding 作为纸内边距，让内容不贴边 */
+    box-shadow: none;
+    page-break-after: always;
+    break-after: page;
+  }
+  .paper:last-child { page-break-after: auto; break-after: auto; }
+
+  .q-h .ans, .q-v .ans { color: var(--crimson-deep); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 试卷保持干净，无底部装饰 */
