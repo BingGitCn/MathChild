@@ -84,34 +84,28 @@ function generateAll(types, maxN, perPage, pages, opts) {
 
 // 操作数对齐改用 CSS 固定宽度盒子（见 renderHorizontal 的 .opd），不再用空格补齐
 
-// ---------- 渲染单题 ---------- 
-function renderHorizontal(q, idx, showAnswer) { 
-    const sign = OPS[q.type]; 
-    let ans = ""; 
-    if (showAnswer) { 
-        ans = (q.type === "div" && q.remainder > 0) ? `<span class="ans">${q.answer}…${q.remainder}</span>` : `<span class="ans">${q.answer}</span>`; 
-    } 
-    const delay = Math.min(idx * 0.006, 0.4); 
-    // 操作数用固定宽度的右对齐盒子，运算符在中间，无论几位数都居中
-    return `<div class="q-h" style="animation-delay:${delay}s"><span class="num">${idx}.</span><span class="opd">${q.a}</span><span class="sign">${sign}</span><span class="opd">${q.b}</span><span class="eq">=</span><span class="blank">${ans}</span></div>`; 
+// ---------- 渲染单题 ----------
+// 答案始终渲染进 DOM，由 body.show-ans 控制显隐（避免打印时重渲染导致竞态）
+function renderHorizontal(q, idx) {
+    const sign = OPS[q.type];
+    const ans = (q.type === "div" && q.remainder > 0) ? `${q.answer}…${q.remainder}` : `${q.answer}`;
+    const delay = Math.min(idx * 0.006, 0.4);
+    return `<div class="q-h" style="animation-delay:${delay}s"><span class="num">${idx}.</span><span class="opd">${q.a}</span><span class="sign">${sign}</span><span class="opd">${q.b}</span><span class="eq">=</span><span class="blank"><span class="ans-wrap">${ans}</span></span></div>`;
+}
+
+function renderVertical(q, idx) {
+    const sign = OPS[q.type];
+    const ans = (q.type === "div" && q.remainder > 0) ? `${q.answer} 余 ${q.remainder}` : `${q.answer}`;
+    const delay = Math.min(idx * 0.02, 0.4);
+    return `<div class="q-v" style="animation-delay:${delay}s"> <span class="num">${idx}.</span> <span class="op-col"><span class="op-sign">${sign}</span></span> <span class="digits"> <span class="row-r">${q.a}</span> <span class="row-r">${q.b}</span> <span class="line"></span><span class="ans-wrap">${ans}</span> </span> </div>`; 
 } 
 
-function renderVertical(q, idx, showAnswer) { 
-    const sign = OPS[q.type]; 
-    let ans = ""; 
-    if (showAnswer) { 
-        ans = (q.type === "div" && q.remainder > 0) ? `<span class="ans">${q.answer} 余 ${q.remainder}</span>` : `<span class="ans">${q.answer}</span>`; 
-    } 
-    const delay = Math.min(idx * 0.02, 0.4); 
-    return `<div class="q-v" style="animation-delay:${delay}s"> <span class="num">${idx}.</span> <span class="op-col"><span class="op-sign">${sign}</span></span> <span class="digits"> <span class="row-r">${q.a}</span> <span class="row-r">${q.b}</span> <span class="line"></span>${ans} </span> </div>`; 
-} 
-
-function renderPaper(questions, start, perPage, form, cols, showAnswer, showMeta, pageNo, totalPages) { 
+function renderPaper(questions, start, perPage, form, cols, showMeta, pageNo, totalPages) { 
     const slice = questions.slice(start, start + perPage); 
     const isVertical = form === "vertical"; 
     let items = ""; 
     slice.forEach((q, i) => { 
-        items += isVertical ? renderVertical(q, start + i + 1, showAnswer) : renderHorizontal(q, start + i + 1, showAnswer); 
+        items += isVertical ? renderVertical(q, start + i + 1) : renderHorizontal(q, start + i + 1);
     }); 
     const gridClass = isVertical ? "grid-vertical" : "grid-horizontal"; 
     const gridStyle = isVertical ? "" : ` style="grid-template-columns: repeat(${cols}, 1fr)"`; 
@@ -177,24 +171,29 @@ function render() {
     if (state.questions.length === 0) { output.innerHTML = ""; return; }
     // 所有设备：A4 纸张整体缩放预览（手机缩小看大概，打印保持 A4 完整单页）
     const isMobile = window.matchMedia("(max-width: 1024px)").matches;
-    let html = ""; 
-    for (let p = 0; p < state.pages; p++) { 
-        const start = p * state.perPage; 
-        html += renderPaper(state.questions, start, state.perPage, state.form, state.cols, state.showAnswer, state.showMeta, p + 1, state.pages); 
-    } 
+    let html = "";
+    for (let p = 0; p < state.pages; p++) {
+        const start = p * state.perPage;
+        html += renderPaper(state.questions, start, state.perPage, state.form, state.cols, state.showMeta, p + 1, state.pages);
+    }
     if (isMobile) {
         output.innerHTML = `<div class="paper-stage"><div class="paper-scaler">${html}</div></div>`;
     } else {
         output.innerHTML = html;
     }
     updateScale();
-    updateAnswerBtn(); 
-} 
+    applyAnswerClass();
+}
 
-function enableActions(on) { 
-    document.getElementById("btnPrint").disabled = !on; 
-    document.getElementById("btnPrintAns").disabled = !on; 
-    document.getElementById("btnAnswer").disabled = !on; 
+// 答案显隐：只切换 body class，绝不重渲染（打印安全）
+function applyAnswerClass() {
+    document.body.classList.toggle("show-ans", state.showAnswer);
+    updateAnswerBtn();
+}
+
+function enableActions(on) {
+    document.getElementById("btnPrint").disabled = !on;
+    document.getElementById("btnAnswer").disabled = !on;
 } 
 
 function updateAnswerBtn() { 
@@ -293,34 +292,21 @@ function bindUI() {
     slider.addEventListener("input", updateRowsMeta); 
     // 生成 
     document.getElementById("generate").addEventListener("click", regenerate); 
-    // 答案切换 
-    document.getElementById("btnAnswer").addEventListener("click", () => { 
-        if (!state.questions.length) return; 
-        state.showAnswer = !state.showAnswer; render(); 
-    }); 
-    // 打印
-    document.getElementById("btnPrint").addEventListener("click", () => {
-        if (!state.questions.length) { flashTip("请先生成题目"); return; } window.print();
+    // 答案切换：只切 class，不重渲染（手机端打印安全）
+    document.getElementById("btnAnswer").addEventListener("click", () => {
+        if (!state.questions.length) return;
+        state.showAnswer = !state.showAnswer;
+        applyAnswerClass();
     });
-    // 一键打印答案版：临时显示答案 → 打印 → 恢复原状
-    document.getElementById("btnPrintAns").addEventListener("click", () => {
+    // 打印（想打印答案版，先点"显示答案"再点打印即可）
+    document.getElementById("btnPrint").addEventListener("click", () => {
         if (!state.questions.length) { flashTip("请先生成题目"); return; }
-        const wasShown = state.showAnswer;
-        if (!wasShown) { state.showAnswer = true; render(); }
-        // 打印完成后恢复
-        const afterPrint = () => {
-            if (!wasShown) { state.showAnswer = false; render(); }
-            window.removeEventListener("afterprint", afterPrint);
-        };
-        window.addEventListener("afterprint", afterPrint);
-        // 兜底：有些浏览器不触发 afterprint，1.5 秒后也恢复
-        setTimeout(() => { if (!wasShown && state.showAnswer) { state.showAnswer = false; render(); } }, 1500);
         window.print();
     });
     // 抽屉
-    document.getElementById("btnMenu").addEventListener("click", openPanel); 
-    document.getElementById("panelClose").addEventListener("click", closePanel); 
-    document.getElementById("overlay").addEventListener("click", closePanel); 
+    document.getElementById("btnMenu").addEventListener("click", openPanel);
+    document.getElementById("panelClose").addEventListener("click", closePanel);
+    document.getElementById("overlay").addEventListener("click", closePanel);
     // 窗口尺寸变化 → 重新渲染（切换 paper-stage 包裹）+ 重算缩放 
     let resizeTimer; 
     window.addEventListener("resize", () => { 

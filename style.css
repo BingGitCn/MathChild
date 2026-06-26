@@ -570,9 +570,14 @@ body::before {
   flex-shrink: 0;
   text-align: center;
 }
-.q-h .ans {
+/* 答案区：默认隐藏答案，body.show-ans 时显示 */
+.ans-wrap {
+  display: none;
   color: var(--crimson-deep);
   font-weight: 700;
+}
+body.show-ans .ans-wrap {
+  display: inline;
 }
 
 /* ============================================================
@@ -619,12 +624,13 @@ body::before {
   border-top: 1.5px solid var(--ink);
   margin: 3px 0;
 }
-.q-v .ans {
-  display: block;
+.q-v .ans-wrap {
+  display: none;          /* 默认隐藏，由 body.show-ans 覆盖 */
   text-align: right;
-  color: var(--crimson-deep);
-  font-weight: 700;
   padding-top: 6px;
+}
+body.show-ans .q-v .ans-wrap {
+  display: block;
 }
 
 /* 题目入场动画 */
@@ -722,7 +728,7 @@ body::before {
   }
   .paper:last-child { page-break-after: auto; break-after: auto; }
 
-  .q-h .ans, .q-v .ans { color: var(--crimson-deep); }
+  .ans-wrap { color: var(--crimson-deep); }
 }
 
 @keyframes fadeIn {
