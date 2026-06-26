@@ -10,18 +10,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="parent-tools.css">
   <style>
+    .paper {
+      display: flex;
+      flex-direction: column;
+    }
+    .paper-title {
+      margin: 16px 0 12px;
+    }
     .writing-grid {
       display: grid;
       grid-template-columns: repeat(20, 1fr);
+      flex: 1;
       border: 1px solid #ccc;
     }
     .writing-cell {
-      width: 100%;
-      aspect-ratio: 1;
       border: 1px solid #ddd;
       position: relative;
     }
-    .writing-cell.empty { border-color: transparent; }
     .writing-cell.margin {
       border-left: 2px solid var(--crimson);
     }
@@ -31,41 +36,25 @@
       align-items: center;
       justify-content: center;
       font-family: var(--ff-mono);
-      font-size: 10px;
+      font-size: 9px;
       color: var(--ink-soft);
     }
     .page-num {
       text-align: right;
       font-family: var(--ff-mono);
-      font-size: 11px;
+      font-size: 10px;
       color: var(--ink-soft);
-      margin-top: 8px;
+      margin-top: 6px;
+      padding-top: 4px;
+      border-top: 1px dashed #ccc;
     }
-    .options-row {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .option-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .option-group label {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--ink-soft);
-    }
-    .option-group select {
-      padding: 6px 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 13px;
-      font-family: var(--ff-display);
-      background: #fff;
-      color: var(--ink);
+    @media print {
+      .paper {
+        height: calc(297mm - 20mm - 15mm);
+      }
+      .writing-cell {
+        border-color: #999;
+      }
     }
   </style>
 </head>
@@ -99,10 +88,10 @@
     (function() {
       "use strict";
 
-      var ROWS = 15;
+      var ROWS = 16;
       var COLS = 20;
 
-      function renderPaper(pageNo) {
+      function renderPaper() {
         var cells = '';
         for (var r = 0; r < ROWS; r++) {
           for (var c = 0; c < COLS; c++) {
@@ -122,15 +111,15 @@
             '<span>姓名：<span class="underline-field">&nbsp;</span></span>' +
           '</div>' +
           '<div class="paper-title">作文稿纸</div>' +
-          '<div class="writing-grid">' + cells + '</div>' +
-          '<div class="page-num">第 ' + pageNo + ' 页 / 共 ' + (ROWS * COLS) + ' 字</div>' +
+          '<div class="writing-grid" style="grid-template-rows: repeat(' + ROWS + ', 1fr)">' + cells + '</div>' +
+          '<div class="page-num">共 ' + (ROWS * COLS) + ' 字</div>' +
         '</section>';
 
         return paper;
       }
 
       function renderAll() {
-        var html = renderPaper(1);
+        var html = renderPaper();
         var isMobile = window.matchMedia("(max-width: 1024px)").matches;
         if (isMobile) {
           document.getElementById('output').innerHTML = '<div class="paper-stage"><div class="paper-scaler">' + html + '</div></div>';

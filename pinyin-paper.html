@@ -10,16 +10,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="parent-tools.css">
   <style>
+    .paper {
+      display: flex;
+      flex-direction: column;
+    }
+    .paper-title {
+      margin: 16px 0 12px;
+    }
     .pinyin-grid {
       display: flex;
       flex-direction: column;
-      gap: 0;
+      flex: 1;
     }
     .pinyin-row {
       display: flex;
       align-items: stretch;
-      height: 56px;
+      flex: 1;
       border-bottom: 1px solid #ccc;
+    }
+    .pinyin-row:last-child {
+      border-bottom: none;
     }
     .pinyin-cell {
       flex: 1;
@@ -27,19 +37,9 @@
       position: relative;
     }
     .pinyin-cell:last-child { border-right: none; }
-    .pinyin-row .line {
-      position: absolute;
-      left: 0;
-      right: 0;
-      border-top: 1px solid #ddd;
-    }
-    .line-top { top: 14px; }
-    .line-mid { top: 28px; }
-    .line-bottom { top: 42px; }
-    .pinyin-row .line:first-child { top: 0; border-top: none; }
     .four-line {
       position: relative;
-      height: 56px;
+      flex: 1;
     }
     .four-line .fl {
       position: absolute;
@@ -59,10 +59,15 @@
       align-items: center;
       justify-content: center;
       font-family: var(--ff-mono);
-      font-size: 11px;
+      font-size: 10px;
       color: var(--ink-soft);
       border-right: 1px solid #ccc;
       flex-shrink: 0;
+    }
+    @media print {
+      .paper {
+        height: calc(297mm - 20mm - 15mm);
+      }
     }
   </style>
 </head>
@@ -99,7 +104,7 @@
       var ROWS = 12;
       var COLS = 8;
 
-      function renderPaper(pageNo) {
+      function renderPaper() {
         var rows = '';
         for (var r = 0; r < ROWS; r++) {
           var cells = '<div class="row-num">' + (r + 1) + '</div>';
@@ -129,7 +134,7 @@
       }
 
       function renderAll() {
-        var html = renderPaper(1);
+        var html = renderPaper();
         var isMobile = window.matchMedia("(max-width: 1024px)").matches;
         if (isMobile) {
           document.getElementById('output').innerHTML = '<div class="paper-stage"><div class="paper-scaler">' + html + '</div></div>';

@@ -10,21 +10,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="parent-tools.css">
   <style>
-    .grid-paper {
-      display: grid;
-      gap: 0;
-      border: 1px solid #999;
+    .paper {
+      display: flex;
+      flex-direction: column;
     }
-    .grid-cell {
-      aspect-ratio: 1;
-      border: 1px solid #ccc;
-      background: #fff;
+    .paper-title {
+      margin: 16px 0 12px;
     }
-    .grid-cell.empty { border-color: transparent; }
     .options-row {
       display: flex;
       gap: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
       align-items: center;
     }
@@ -63,6 +59,21 @@
       border-color: var(--ink);
       transform: scale(1.1);
     }
+    .grid-paper {
+      display: grid;
+      flex: 1;
+      gap: 0;
+      border: 1px solid #999;
+    }
+    .grid-cell {
+      border: 1px solid #ccc;
+      background: #fff;
+    }
+    @media print {
+      .paper {
+        height: calc(297mm - 20mm - 15mm);
+      }
+    }
   </style>
 </head>
 <body>
@@ -95,15 +106,20 @@
     (function() {
       "use strict";
 
-      var gridSize = 25;
+      var gridSize = 20;
       var lineColor = '#ccc';
+      var ROWS, COLS;
+
+      function calcGrid() {
+        ROWS = Math.floor(240 / gridSize);
+        COLS = Math.floor(180 / gridSize);
+      }
 
       function renderPaper() {
-        var rows = Math.floor(240 / gridSize);
-        var cols = Math.floor(180 / gridSize);
+        calcGrid();
         var cells = '';
-        for (var i = 0; i < rows * cols; i++) {
-          cells += '<div class="grid-cell"></div>';
+        for (var i = 0; i < ROWS * COLS; i++) {
+          cells += '<div class="grid-cell" style="border-color:' + lineColor + '"></div>';
         }
 
         var paper = '<section class="paper">' +
@@ -116,8 +132,8 @@
               '<label>格子大小：</label>' +
               '<select id="gridSize">' +
                 '<option value="15">小 (15mm)</option>' +
-                '<option value="20">中 (20mm)</option>' +
-                '<option value="25" selected>大 (25mm)</option>' +
+                '<option value="20" selected>中 (20mm)</option>' +
+                '<option value="25">大 (25mm)</option>' +
               '</select>' +
             '</div>' +
             '<div class="option-group">' +
@@ -130,11 +146,25 @@
               '</div>' +
             '</div>' +
           '</div>' +
-          '<div id="gridContainer" class="grid-paper" style="grid-template-columns: repeat(' + cols + ', 1fr); border-color: ' + lineColor + '">' + cells + '</div>' +
+          '<div id="gridContainer" class="grid-paper" style="grid-template-columns: repeat(' + COLS + ', 1fr); grid-template-rows: repeat(' + ROWS + ', 1fr); border-color: ' + lineColor + '">' + cells + '</div>' +
           '<div class="paper-footer"><span>数学画图 · 坐标练习 · 自由创作</span></div>' +
         '</section>';
 
         return paper;
+      }
+
+      function updateGrid() {
+        calcGrid();
+        var container = document.getElementById('gridContainer');
+        container.style.gridTemplateColumns = 'repeat(' + COLS + ', 1fr)';
+        container.style.gridTemplateRows = 'repeat(' + ROWS + ', 1fr)';
+        container.style.borderColor = lineColor;
+        var cells = '';
+        for (var i = 0; i < ROWS * COLS; i++) {
+          cells += '<div class="grid-cell" style="border-color:' + lineColor + '"></div>';
+        }
+        container.innerHTML = cells;
+        updateScale();
       }
 
       function renderAll() {
@@ -149,24 +179,10 @@
         bindOptions();
       }
 
-      function updateGrid() {
-        var rows = Math.floor(240 / gridSize);
-        var cols = Math.floor(180 / gridSize);
-        var container = document.getElementById('gridContainer');
-        container.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
-        container.style.borderColor = lineColor;
-        var cells = '';
-        for (var i = 0; i < rows * cols; i++) {
-          cells += '<div class="grid-cell" style="border-color:' + lineColor + '"></div>';
-        }
-        container.innerHTML = cells;
-      }
-
       function bindOptions() {
         document.getElementById('gridSize').addEventListener('change', function() {
           gridSize = parseInt(this.value, 10);
           updateGrid();
-          updateScale();
         });
         document.querySelectorAll('.color-btn').forEach(function(btn) {
           btn.addEventListener('click', function() {
