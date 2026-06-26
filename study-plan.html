@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a1a1a">
+  <title>学习计划表 · 小学工具集</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="parent-tools.css">
+  <style>
+    .plan-header-row {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .plan-header-row .field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .plan-header-row label {
+      font-weight: 700;
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+    .plan-header-row .underline-field {
+      min-width: 120px;
+    }
+    .goals-section {
+      margin-top: 16px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .goals-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .goal-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px dashed #ddd;
+    }
+    .goal-row:last-child { border-bottom: none; }
+    .goal-check {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--ink-soft);
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .goal-text {
+      flex: 1;
+      border-bottom: 1px solid #ccc;
+      min-height: 20px;
+    }
+    .reward-section {
+      margin-top: 16px;
+      padding: 12px;
+      border: 1px dashed var(--ink-soft);
+      border-radius: 4px;
+    }
+    .reward-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">
+        <a href="index.html" class="back-link" title="返回首页">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <span class="logo-icon">📅</span>
+        <div class="logo-text">
+          <h1>学习计划表</h1>
+          <p>Study Plan</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="btnPrint" class="ghost-btn" title="打印">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span class="label">打印</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div id="output" class="output"></div>
+  </main>
+
+  <script>
+    (function() {
+      "use strict";
+
+      const WEEKDAYS = ['周一','周二','周三','周四','周五','周六','周日'];
+      const TIMES = ['早晨','上午','午休后','下午','傍晚','晚间'];
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+
+      // 获取本周周一的日期
+      function getMonday() {
+        const d = new Date(year, now.getMonth(), day);
+        const diff = d.getDay() === 0 ? 6 : d.getDay() - 1;
+        d.setDate(d.getDate() - diff);
+        return d;
+      }
+
+      const monday = getMonday();
+
+      function renderPaper() {
+        let rows = '';
+        for (let t = 0; t < TIMES.length; t++) {
+          let cells = '';
+          for (let d = 0; d < 7; d++) {
+            const date = new Date(monday);
+            date.setDate(date.getDate() + d);
+            const dateStr = `${date.getMonth()+1}/${date.getDate()}`;
+            cells += `<td>
+              <span class="plan-date">${dateStr}</span>
+            </td>`;
+          }
+          rows += `<tr>
+            <td class="time-col">${TIMES[t]}</td>
+            ${cells}
+          </tr>`;
+        }
+
+        const paper = `
+          <section class="paper">
+            <div class="paper-header">
+              <span>姓名：<span class="underline-field">&nbsp;</span></span>
+              <span>${year}年${month}月 第${Math.ceil(day/7)}周 学习计划</span>
+            </div>
+            <div class="paper-title">每周学习计划表</div>
+
+            <table class="plan-table">
+              <thead>
+                <tr>
+                  <th style="width:70px">时段</th>
+                  ${WEEKDAYS.map((d, i) => {
+                    const date = new Date(monday);
+                    date.setDate(date.getDate() + i);
+                    return `<th>${d}<br><span style="font-weight:400;font-size:11px;color:var(--ink-soft)">${date.getMonth()+1}/${date.getDate()}</span></th>`;
+                  }).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                ${rows}
+              </tbody>
+            </table>
+
+            <div class="goals-section">
+              <div class="goals-title">🎯 本周目标</div>
+              ${[1,2,3].map(i => `
+                <div class="goal-row">
+                  <div class="goal-check"></div>
+                  <div class="goal-text"></div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="reward-section">
+              <div class="reward-title">🏆 完成目标奖励</div>
+              <div style="min-height:24px;border-bottom:1px solid #ccc;"></div>
+            </div>
+
+            <div class="paper-footer">
+              <span>合理安排时间，劳逸结合</span>
+            </div>
+          </section>
+        `;
+
+        const isMobile = window.matchMedia("(max-width: 1024px)").matches;
+        if (isMobile) {
+          document.getElementById('output').innerHTML = '<div class="paper-stage"><div class="paper-scaler">' + paper + '</div></div>';
+        } else {
+          document.getElementById('output').innerHTML = paper;
+        }
+        updateScale();
+      }
+
+      const PAPER_W = 794;
+      function updateScale() {
+        const stage = document.querySelector('.paper-stage');
+        if (!stage) return;
+        const scaler = stage.querySelector('.paper-scaler');
+        const paper = stage.querySelector('.paper');
+        if (!scaler || !paper) return;
+        const avail = window.innerWidth - 24;
+        const scale = Math.min(1, avail / PAPER_W);
+        scaler.style.transform = 'scale(' + scale + ')';
+        scaler.style.transformOrigin = 'top center';
+        scaler.style.width = PAPER_W + 'px';
+        stage.style.width = '100%';
+        stage.style.height = (paper.offsetHeight * scale) + 'px';
+        stage.style.overflow = 'hidden';
+      }
+
+      renderPaper();
+
+      window.addEventListener('resize', function() { renderPaper(); });
+
+      document.getElementById('btnPrint').addEventListener('click', function() {
+        window.print();
+      });
+    })();
+  </script>
+</body>
+</html>

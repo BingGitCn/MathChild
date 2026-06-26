@@ -2,135 +2,198 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#1a1a1a">
-  <title>算术练习本 · A4 打印</title>
+  <title>小学工具集 · MathChild</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #fdfbf6;
+      --ink: #1c1b1a;
+      --ink-soft: #4a4844;
+      --crimson: #c8324c;
+      --accent: #2d5f3f;
+      --bg: #1a1a1a;
+      --bg-soft: #232323;
+      --line: #3a3835;
+      --muted: #8a857d;
+      --gold: #d4a84b;
+      --ff-display: "Noto Serif SC", "Songti SC", serif;
+      --ff-mono: "JetBrains Mono", "Courier New", monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: var(--ff-display);
+      background: var(--bg);
+      color: #e8e3da;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(212,168,75,.04), transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(200,50,76,.03), transparent 50%);
+      pointer-events: none;
+    }
+    .container {
+      max-width: 720px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+    .hero {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .hero-icon {
+      font-size: 48px;
+      color: var(--gold);
+      margin-bottom: 16px;
+      letter-spacing: .1em;
+    }
+    .hero h1 {
+      font-family: var(--ff-display);
+      font-size: 32px;
+      font-weight: 900;
+      color: #f5f0e6;
+      letter-spacing: .05em;
+      margin-bottom: 8px;
+    }
+    .hero p {
+      font-family: var(--ff-mono);
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+    .section-title {
+      font-family: var(--ff-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-left: 4px;
+    }
+    .section-title span {
+      color: var(--gold);
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 24px 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: all .2s;
+      cursor: pointer;
+    }
+    .card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.3);
+    }
+    .card-icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: rgba(212,168,75,.1);
+    }
+    .card h3 {
+      font-family: var(--ff-display);
+      font-size: 16px;
+      font-weight: 900;
+      color: #f5f0e6;
+      margin-bottom: 6px;
+    }
+    .card p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px 0;
+      font-family: var(--ff-mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .05em;
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 26px; }
+      .cards { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- ============ 顶部栏（始终可见，含移动端菜单触发） ============ -->
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="logo">
-        <span class="logo-mark">∑</span>
-        <div class="logo-text">
-          <h1>算术练习本</h1>
-          <p>Math Practice · A4 打印</p>
-        </div>
-      </div>
-      <div class="topbar-actions">
-        <button id="btnAnswer" class="ghost-btn" title="显示/隐藏答案" disabled>
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          <span class="label">答案</span>
-        </button>
-        <button id="btnPrint" class="ghost-btn" title="打印 / 导出 PDF" disabled>
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-          <span class="label">打印</span>
-        </button>
-        <button id="btnMenu" class="menu-btn" aria-label="设置">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- ============ 设置面板（桌面侧栏 / 移动端抽屉） ============ -->
-  <aside id="panel" class="panel" aria-hidden="false">
-    <div class="panel-head">
-      <h2>出题设置</h2>
-      <button id="panelClose" class="panel-close" aria-label="关闭">×</button>
+  <div class="container">
+    <div class="hero">
+      <div class="hero-icon">∑</div>
+      <h1>小学工具集</h1>
+      <p>MathChild · Print Tools</p>
     </div>
 
-    <div class="panel-body">
-      <!-- 运算类型 -->
-      <div class="field">
-        <label class="field-label">运算类型</label>
-        <div class="op-chips" id="opChips">
-          <button class="op-chip active" data-op="add">＋ 加</button>
-          <button class="op-chip active" data-op="sub">－ 减</button>
-          <button class="op-chip" data-op="mul">× 乘</button>
-          <button class="op-chip" data-op="div">÷ 除</button>
-        </div>
+    <div class="section">
+      <div class="section-title"><span>●</span> 学生工具</div>
+      <div class="cards">
+        <a href="arithmetic.html" class="card">
+          <div class="card-icon">∑</div>
+          <h3>算术练习卷</h3>
+          <p>口算 / 竖式，加减乘除，三档难度，A4 打印</p>
+        </a>
       </div>
-
-      <!-- 数字范围上限 -->
-      <div class="field">
-        <label class="field-label" for="maxNum">数字范围上限 <span class="muted">（数字与结果均不超过此值）</span></label>
-        <div class="num-input-row">
-          <input type="number" id="maxNum" value="10" min="2" max="99999" class="num-input">
-          <div class="quick-btns">
-            <button type="button" class="quick-btn" data-val="10">10</button>
-            <button type="button" class="quick-btn" data-val="20">20</button>
-            <button type="button" class="quick-btn" data-val="50">50</button>
-            <button type="button" class="quick-btn" data-val="100">100</button>
-          </div>
-        </div>
-        <p class="field-hint">如 10 = 10以内口算，20 = 20以内，100 = 100以内</p>
-      </div>
-
-      <!-- 题型 -->
-      <div class="field">
-        <label class="field-label">题型</label>
-        <div class="seg" id="formSeg">
-          <button class="seg-btn active" data-form="horizontal">横式口算</button>
-          <button class="seg-btn" data-form="vertical">竖式列式</button>
-        </div>
-      </div>
-
-      <!-- 行数 -->
-      <div class="field">
-        <label class="field-label" for="perPage">每页行数 <span class="muted" id="rowsMeta">＝ 64 题</span></label>
-        <input type="range" id="perPage" min="12" max="24" step="2" value="16">
-        <div class="range-ticks"><span>少</span><span>多</span></div>
-      </div>
-
-      <!-- 页数 -->
-      <div class="field">
-        <label class="field-label" for="pages">页数</label>
-        <div class="seg" id="pagesSeg">
-          <button class="seg-btn active" data-pages="1">1</button>
-          <button class="seg-btn" data-pages="2">2</button>
-          <button class="seg-btn" data-pages="3">3</button>
-          <button class="seg-btn" data-pages="5">5</button>
-        </div>
-      </div>
-
-      <!-- 选项 -->
-      <div class="field">
-        <label class="field-label">约束</label>
-        <label class="switch-row">
-          <span>减法结果不为负</span>
-          <input type="checkbox" id="noNegative" checked class="switch">
-        </label>
-        <label class="switch-row">
-          <span>除法允许有余数</span>
-          <input type="checkbox" id="allowRemainder" checked class="switch">
-        </label>
-        <label class="switch-row">
-          <span>姓名/日期/得分栏</span>
-          <input type="checkbox" id="showName" checked class="switch">
-        </label>
-      </div>
-
-      <button id="generate" class="primary-btn">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        生成新卷
-      </button>
     </div>
-  </aside>
 
-  <!-- 移动端遮罩 -->
-  <div id="overlay" class="overlay" hidden></div>
+    <div class="section">
+      <div class="section-title"><span>●</span> 家长工具</div>
+      <div class="cards">
+        <a href="practice-log.html" class="card">
+          <div class="card-icon">📋</div>
+          <h3>练习记录表</h3>
+          <p>每日练习打卡，记录时间、内容与完成情况</p>
+        </a>
+        <a href="score-tracker.html" class="card">
+          <div class="card-icon">📊</div>
+          <h3>成绩追踪表</h3>
+          <p>记录每次练习成绩，跟踪正确率变化趋势</p>
+        </a>
+        <a href="study-plan.html" class="card">
+          <div class="card-icon">📅</div>
+          <h3>学习计划表</h3>
+          <p>制定每周 / 每月学习计划，打印张贴</p>
+        </a>
+      </div>
+    </div>
 
-  <!-- ============ 主区域 ============ -->
-  <main class="main">
-    <div id="output" class="output"></div>
-  </main>
-
-  <script src="app.js"></script>
+    <div class="footer">
+      Made with ❤ for 小学生学习
+    </div>
+  </div>
 </body>
 </html>

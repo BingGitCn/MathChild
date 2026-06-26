@@ -79,6 +79,19 @@ body::before {
   gap: 12px;
 }
 .logo { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.back-link:hover { color: #e8e3da; border-color: var(--gold); }
 .logo-mark {
   font-family: var(--ff-display);
   font-size: 28px;

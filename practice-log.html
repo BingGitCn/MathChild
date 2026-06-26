@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a1a1a">
+  <title>练习记录表 · 小学工具集</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="parent-tools.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">
+        <a href="index.html" class="back-link" title="返回首页">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <span class="logo-icon">📋</span>
+        <div class="logo-text">
+          <h1>练习记录表</h1>
+          <p>Practice Log</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="btnPrint" class="ghost-btn" title="打印">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span class="label">打印</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div id="output" class="output">
+      <!-- 由 JS 渲染 -->
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      "use strict";
+
+      const MONTHS = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+      const WEEKDAYS = ['周一','周二','周三','周四','周五','周六','周日'];
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+
+      // 获取当月天数
+      function daysInMonth(y, m) {
+        return new Date(y, m + 1, 0).getDate();
+      }
+
+      // 获取某天是周几 (0=周日)
+      function dayOfWeek(y, m, d) {
+        return new Date(y, m, d).getDay();
+      }
+
+      function renderPaper() {
+        const totalDays = daysInMonth(year, month);
+        const firstDay = dayOfWeek(year, month, 1);
+        // 调整为周一起始 (0=周一, 6=周日)
+        const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+
+        let rows = '';
+        let day = 1;
+
+        // 按周分行
+        const totalCells = startOffset + totalDays;
+        const totalRows = Math.ceil(totalCells / 7);
+
+        for (let r = 0; r < totalRows; r++) {
+          let cells = '';
+          for (let c = 0; c < 7; c++) {
+            const cellIdx = r * 7 + c;
+            if (cellIdx >= startOffset && day <= totalDays) {
+              const isToday = day === now.getDate();
+              cells += `<td class="day-cell${isToday ? ' today' : ''}">
+                <span class="day-num">${day}</span>
+                <div class="day-content"></div>
+              </td>`;
+              day++;
+            } else {
+              cells += '<td class="day-cell empty"></td>';
+            }
+          }
+          rows += `<tr>${cells}</tr>`;
+        }
+
+        const paper = `
+          <section class="paper">
+            <div class="paper-header">
+              <span>姓名：<span class="underline-field">&nbsp;</span></span>
+              <span>${year}年${MONTHS[month]}</span>
+            </div>
+            <div class="paper-title">练习记录表</div>
+            <table class="log-table">
+              <thead>
+                <tr>
+                  ${WEEKDAYS.map(d => `<th>${d}</th>`).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                ${rows}
+              </tbody>
+            </table>
+            <div class="paper-footer">
+              <div class="legend">
+                <span>📝 记录每日练习的科目、时长和完成情况</span>
+              </div>
+            </div>
+          </section>
+        `;
+
+        const isMobile = window.matchMedia("(max-width: 1024px)").matches;
+        if (isMobile) {
+          document.getElementById('output').innerHTML = '<div class="paper-stage"><div class="paper-scaler">' + paper + '</div></div>';
+        } else {
+          document.getElementById('output').innerHTML = paper;
+        }
+        updateScale();
+      }
+
+      const PAPER_W = 794;
+      function updateScale() {
+        const stage = document.querySelector('.paper-stage');
+        if (!stage) return;
+        const scaler = stage.querySelector('.paper-scaler');
+        const paper = stage.querySelector('.paper');
+        if (!scaler || !paper) return;
+        const avail = window.innerWidth - 24;
+        const scale = Math.min(1, avail / PAPER_W);
+        scaler.style.transform = 'scale(' + scale + ')';
+        scaler.style.transformOrigin = 'top center';
+        scaler.style.width = PAPER_W + 'px';
+        stage.style.width = '100%';
+        stage.style.height = (paper.offsetHeight * scale) + 'px';
+        stage.style.overflow = 'hidden';
+      }
+
+      renderPaper();
+
+      window.addEventListener('resize', function() { renderPaper(); });
+
+      document.getElementById('btnPrint').addEventListener('click', function() {
+        window.print();
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -193,6 +193,7 @@ function applyAnswerClass() {
 
 function enableActions(on) {
     document.getElementById("btnPrint").disabled = !on;
+    document.getElementById("btnPdf").disabled = !on;
     document.getElementById("btnAnswer").disabled = !on;
 } 
 
@@ -302,6 +303,12 @@ function bindUI() {
     document.getElementById("btnPrint").addEventListener("click", () => {
         if (!state.questions.length) { flashTip("请先生成题目"); return; }
         window.print();
+    });
+    // 导出 PDF：调起打印，提示选"另存为 PDF"，纸张选 A4
+    document.getElementById("btnPdf").addEventListener("click", () => {
+        if (!state.questions.length) { flashTip("请先生成题目"); return; }
+        flashTip("在弹出窗口选「另存为 PDF」，纸张选 A4");
+        setTimeout(() => window.print(), 600);
     });
     // 抽屉
     document.getElementById("btnMenu").addEventListener("click", openPanel);

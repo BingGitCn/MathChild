@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#1a1a1a">
+  <title>算术练习本 · A4 打印</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============ 顶部栏（始终可见，含移动端菜单触发） ============ -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">
+        <a href="index.html" class="back-link" title="返回首页">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <span class="logo-mark">∑</span>
+        <div class="logo-text">
+          <h1>算术练习本</h1>
+          <p>Math Practice · A4 打印</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="btnAnswer" class="ghost-btn" title="显示/隐藏答案" disabled>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span class="label">答案</span>
+        </button>
+        <button id="btnPrint" class="ghost-btn" title="打印" disabled>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span class="label">打印</span>
+        </button>
+        <button id="btnPdf" class="ghost-btn" title="导出 PDF 文件" disabled>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          <span class="label">PDF</span>
+        </button>
+        <button id="btnMenu" class="menu-btn" aria-label="设置">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 设置面板（桌面侧栏 / 移动端抽屉） ============ -->
+  <aside id="panel" class="panel" aria-hidden="false">
+    <div class="panel-head">
+      <h2>出题设置</h2>
+      <button id="panelClose" class="panel-close" aria-label="关闭">×</button>
+    </div>
+
+    <div class="panel-body">
+      <!-- 运算类型 -->
+      <div class="field">
+        <label class="field-label">运算类型</label>
+        <div class="op-chips" id="opChips">
+          <button class="op-chip active" data-op="add">＋ 加</button>
+          <button class="op-chip active" data-op="sub">－ 减</button>
+          <button class="op-chip" data-op="mul">× 乘</button>
+          <button class="op-chip" data-op="div">÷ 除</button>
+        </div>
+      </div>
+
+      <!-- 数字范围上限 -->
+      <div class="field">
+        <label class="field-label" for="maxNum">数字范围上限 <span class="muted">（数字与结果均不超过此值）</span></label>
+        <div class="num-input-row">
+          <input type="number" id="maxNum" value="10" min="2" max="99999" class="num-input">
+          <div class="quick-btns">
+            <button type="button" class="quick-btn" data-val="10">10</button>
+            <button type="button" class="quick-btn" data-val="20">20</button>
+            <button type="button" class="quick-btn" data-val="50">50</button>
+            <button type="button" class="quick-btn" data-val="100">100</button>
+          </div>
+        </div>
+        <p class="field-hint">如 10 = 10以内口算，20 = 20以内，100 = 100以内</p>
+      </div>
+
+      <!-- 题型 -->
+      <div class="field">
+        <label class="field-label">题型</label>
+        <div class="seg" id="formSeg">
+          <button class="seg-btn active" data-form="horizontal">横式口算</button>
+          <button class="seg-btn" data-form="vertical">竖式列式</button>
+        </div>
+      </div>
+
+      <!-- 行数 -->
+      <div class="field">
+        <label class="field-label" for="perPage">每页行数 <span class="muted" id="rowsMeta">＝ 64 题</span></label>
+        <input type="range" id="perPage" min="12" max="24" step="2" value="16">
+        <div class="range-ticks"><span>少</span><span>多</span></div>
+      </div>
+
+      <!-- 页数 -->
+      <div class="field">
+        <label class="field-label" for="pages">页数</label>
+        <div class="seg" id="pagesSeg">
+          <button class="seg-btn active" data-pages="1">1</button>
+          <button class="seg-btn" data-pages="2">2</button>
+          <button class="seg-btn" data-pages="3">3</button>
+          <button class="seg-btn" data-pages="5">5</button>
+        </div>
+      </div>
+
+      <!-- 选项 -->
+      <div class="field">
+        <label class="field-label">约束</label>
+        <label class="switch-row">
+          <span>减法结果不为负</span>
+          <input type="checkbox" id="noNegative" checked class="switch">
+        </label>
+        <label class="switch-row">
+          <span>除法允许有余数</span>
+          <input type="checkbox" id="allowRemainder" checked class="switch">
+        </label>
+        <label class="switch-row">
+          <span>姓名/日期/得分栏</span>
+          <input type="checkbox" id="showName" checked class="switch">
+        </label>
+      </div>
+
+      <button id="generate" class="primary-btn">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        生成新卷
+      </button>
+    </div>
+  </aside>
+
+  <!-- 移动端遮罩 -->
+  <div id="overlay" class="overlay" hidden></div>
+
+  <!-- ============ 主区域 ============ -->
+  <main class="main">
+    <div id="output" class="output"></div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
