@@ -32,11 +32,19 @@
       font-weight: 700;
       color: var(--ink-soft);
     }
+    .tianzige-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     .tianzige-grid {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
       grid-template-rows: repeat(10, 1fr);
-      flex: 1;
+      aspect-ratio: 1;
+      width: 100%;
+      max-width: 100%;
       gap: 0;
       border: 2px solid var(--ink);
     }
@@ -120,7 +128,9 @@
           '<div class="header-row">' +
             '<div class="field"><label>练习内容：</label><span class="underline-field" style="min-width:200px">&nbsp;</span></div>' +
           '</div>' +
-          '<div class="tianzige-grid">' + cells + '</div>' +
+          '<div class="tianzige-wrapper">' +
+            '<div class="tianzige-grid">' + cells + '</div>' +
+          '</div>' +
           '<div class="paper-footer"><span>一笔一划写好中国字</span></div>' +
         '</section>';
 
