@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#1a1a1a">
-  <title>成绩追踪表 · 小学工具集</title>
+  <title>成绩档案 · 学习足迹</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -13,13 +13,13 @@
     .score-header-row {
       display: flex;
       gap: 24px;
-      margin-bottom: 20px;
-      font-size: 14px;
+      margin-bottom: 12px;
+      font-size: 13px;
     }
     .score-header-row .field {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     .score-header-row label {
       font-weight: 700;
@@ -27,41 +27,50 @@
       white-space: nowrap;
     }
     .score-header-row .underline-field {
-      min-width: 120px;
+      min-width: 100px;
+    }
+    .score-table th {
+      padding: 6px 4px !important;
+      font-size: 11px !important;
+    }
+    .score-table td {
+      padding: 5px 4px !important;
+      height: 32px !important;
+      font-size: 11px !important;
     }
     .summary-row {
       display: flex;
-      gap: 20px;
+      gap: 24px;
       justify-content: center;
-      margin-top: 20px;
-      padding-top: 12px;
+      margin-top: 14px;
+      padding-top: 10px;
       border-top: 1px dashed var(--ink-soft);
     }
     .summary-item {
       text-align: center;
       font-family: var(--ff-mono);
-      font-size: 12px;
+      font-size: 11px;
       color: var(--ink-soft);
     }
     .summary-item .val {
       display: block;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       color: var(--ink);
       margin-bottom: 2px;
     }
     .note-area {
-      margin-top: 20px;
-      padding: 12px;
+      margin-top: 14px;
+      padding: 8px;
       border: 1px dashed #ccc;
       border-radius: 4px;
-      min-height: 60px;
+      height: 50px;
     }
     .note-area-label {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--ink-soft);
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
   </style>
 </head>
@@ -74,7 +83,7 @@
         </a>
         <span class="logo-icon">📊</span>
         <div class="logo-text">
-          <h1>成绩追踪表</h1>
+          <h1>成绩档案</h1>
           <p>Score Tracker</p>
         </div>
       </div>
@@ -101,80 +110,42 @@
 
       function renderPaper() {
         let rows = '';
-        for (let i = 1; i <= 30; i++) {
-          rows += `<tr>
-            <td>${i}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>`;
+        for (let i = 1; i <= 20; i++) {
+          rows += '<tr><td>' + i + '</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
         }
 
-        const paper = `
-          <section class="paper">
-            <div class="paper-header">
-              <span>姓名：<span class="underline-field">&nbsp;</span></span>
-              <span>${year}年${month}月 成绩追踪</span>
-            </div>
-            <div class="paper-title">成绩追踪表</div>
+        var paper = '<section class="paper">' +
+          '<div class="paper-header">' +
+            '<span>姓名：<span class="underline-field">&nbsp;</span></span>' +
+            '<span>' + year + '年' + month + '月 成绩追踪</span>' +
+          '</div>' +
+          '<div class="paper-title">成绩追踪表</div>' +
+          '<div class="score-header-row">' +
+            '<div class="field"><label>科目：</label><span class="underline-field">&nbsp;</span></div>' +
+            '<div class="field"><label>练习类型：</label><span class="underline-field">&nbsp;</span></div>' +
+          '</div>' +
+          '<table class="score-table">' +
+            '<thead><tr>' +
+              '<th style="width:45px">日期</th>' +
+              '<th>题目总数</th>' +
+              '<th>正确数</th>' +
+              '<th>错误数</th>' +
+              '<th>正确率</th>' +
+              '<th>用时(分)</th>' +
+              '<th>备注</th>' +
+            '</tr></thead>' +
+            '<tbody>' + rows + '</tbody>' +
+          '</table>' +
+          '<div class="summary-row">' +
+            '<div class="summary-item"><span class="val"></span>平均正确率</div>' +
+            '<div class="summary-item"><span class="val"></span>最高正确率</div>' +
+            '<div class="summary-item"><span class="val"></span>练习次数</div>' +
+          '</div>' +
+          '<div class="note-area"><div class="note-area-label">📝 学习笔记 / 薄弱点记录</div></div>' +
+          '<div class="paper-footer"><span>记录每次练习成绩，跟踪进步趋势</span></div>' +
+        '</section>';
 
-            <div class="score-header-row">
-              <div class="field">
-                <label>科目：</label>
-                <span class="underline-field">&nbsp;</span>
-              </div>
-              <div class="field">
-                <label>练习类型：</label>
-                <span class="underline-field">&nbsp;</span>
-              </div>
-            </div>
-
-            <table class="score-table">
-              <thead>
-                <tr>
-                  <th style="width:50px">日期</th>
-                  <th>题目总数</th>
-                  <th>正确数</th>
-                  <th>错误数</th>
-                  <th>正确率</th>
-                  <th>用时(分)</th>
-                  <th>备注</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${rows}
-              </tbody>
-            </table>
-
-            <div class="summary-row">
-              <div class="summary-item">
-                <span class="val"></span>
-                平均正确率
-              </div>
-              <div class="summary-item">
-                <span class="val"></span>
-                最高正确率
-              </div>
-              <div class="summary-item">
-                <span class="val"></span>
-                练习次数
-              </div>
-            </div>
-
-            <div class="note-area">
-              <div class="note-area-label">📝 学习笔记 / 薄弱点记录</div>
-            </div>
-
-            <div class="paper-footer">
-              <span>记录每次练习成绩，跟踪进步趋势</span>
-            </div>
-          </section>
-        `;
-
-        const isMobile = window.matchMedia("(max-width: 1024px)").matches;
+        var isMobile = window.matchMedia("(max-width: 1024px)").matches;
         if (isMobile) {
           document.getElementById('output').innerHTML = '<div class="paper-stage"><div class="paper-scaler">' + paper + '</div></div>';
         } else {
@@ -183,15 +154,15 @@
         updateScale();
       }
 
-      const PAPER_W = 794;
+      var PAPER_W = 794;
       function updateScale() {
-        const stage = document.querySelector('.paper-stage');
+        var stage = document.querySelector('.paper-stage');
         if (!stage) return;
-        const scaler = stage.querySelector('.paper-scaler');
-        const paper = stage.querySelector('.paper');
+        var scaler = stage.querySelector('.paper-scaler');
+        var paper = stage.querySelector('.paper');
         if (!scaler || !paper) return;
-        const avail = window.innerWidth - 24;
-        const scale = Math.min(1, avail / PAPER_W);
+        var avail = window.innerWidth - 24;
+        var scale = Math.min(1, avail / PAPER_W);
         scaler.style.transform = 'scale(' + scale + ')';
         scaler.style.transformOrigin = 'top center';
         scaler.style.width = PAPER_W + 'px';
