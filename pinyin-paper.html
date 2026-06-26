@@ -20,12 +20,11 @@
     .pinyin-grid {
       display: flex;
       flex-direction: column;
-      flex: 1;
     }
     .pinyin-row {
       display: flex;
       align-items: stretch;
-      flex: 1;
+      height: 16mm;
       border-bottom: 1px solid #ccc;
     }
     .pinyin-row:last-child {
@@ -64,11 +63,6 @@
       border-right: 1px solid #ccc;
       flex-shrink: 0;
     }
-    @media print {
-      .paper {
-        height: calc(297mm - 20mm - 15mm);
-      }
-    }
   </style>
 </head>
 <body>
@@ -101,10 +95,20 @@
     (function() {
       "use strict";
 
-      var ROWS = 12;
       var COLS = 8;
+      var ROW_HEIGHT_MM = 16;
+
+      function calcRows() {
+        var pageH = 297;
+        var topPad = 20, bottomPad = 15;
+        var headerH = 18, titleH = 28, footerH = 20;
+        var gridAreaH = pageH - topPad - bottomPad - headerH - titleH - footerH;
+        var rows = Math.floor(gridAreaH / ROW_HEIGHT_MM);
+        return rows;
+      }
 
       function renderPaper() {
+        var ROWS = calcRows();
         var rows = '';
         for (var r = 0; r < ROWS; r++) {
           var cells = '<div class="row-num">' + (r + 1) + '</div>';
