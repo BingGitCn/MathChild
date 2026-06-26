@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a1a1a">
+  <title>作息时间表 · 纸上时光</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="parent-tools.css">
+  <style>
+    .routine-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    .routine-table th, .routine-table td {
+      border: 1px solid #ccc;
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+    .routine-table th {
+      background: rgba(212,168,75,.12);
+      font-weight: 700;
+      color: var(--ink);
+      border-color: var(--ink-soft);
+      text-align: center;
+    }
+    .routine-table .time-col {
+      width: 110px;
+      font-family: var(--ff-mono);
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-align: center;
+      vertical-align: middle;
+    }
+    .routine-table .activity-col {
+      text-align: left;
+    }
+    .routine-table .note-col {
+      width: 120px;
+      color: var(--ink-soft);
+      font-size: 12px;
+    }
+    .routine-table .section-row td {
+      background: rgba(212,168,75,.08);
+      font-weight: 700;
+      color: var(--ink);
+      text-align: center;
+      padding: 6px;
+    }
+    .routine-table .check-col {
+      width: 50px;
+      text-align: center;
+    }
+    .check-box {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid #999;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">
+        <a href="index.html" class="back-link" title="返回首页">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <span class="logo-icon">⏰</span>
+        <div class="logo-text">
+          <h1>作息时间表</h1>
+          <p>Daily Routine</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="btnPrint" class="ghost-btn" title="打印">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span class="label">打印</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div id="output" class="output"></div>
+  </main>
+
+  <script>
+    (function() {
+      "use strict";
+
+      var routine = [
+        { section: '早 晨' },
+        { time: '6:30 - 7:00', activity: '起床、洗漱', note: '' },
+        { time: '7:00 - 7:30', activity: '早餐', note: '' },
+        { time: '7:30 - 8:00', activity: '晨读 / 上学', note: '' },
+        { section: '上 午' },
+        { time: '8:00 - 12:00', activity: '学校课程', note: '' },
+        { section: '中 午' },
+        { time: '12:00 - 12:30', activity: '午餐', note: '' },
+        { time: '12:30 - 13:30', activity: '午休', note: '' },
+        { section: '下 午' },
+        { time: '13:30 - 17:00', activity: '学校课程 / 放学', note: '' },
+        { section: '晚 上' },
+        { time: '17:00 - 18:00', activity: '户外活动 / 运动', note: '' },
+        { time: '18:00 - 18:30', activity: '晚餐', note: '' },
+        { time: '18:30 - 19:30', activity: '作业时间', note: '' },
+        { time: '19:30 - 20:30', activity: '自由阅读 / 兴趣', note: '' },
+        { time: '20:30 - 21:00', activity: '洗漱、准备睡觉', note: '' },
+        { time: '21:00', activity: '熄灯睡觉', note: '' }
+      ];
+
+      function renderPaper() {
+        var headerRow = '<tr>' +
+          '<th style="width:110px">时间</th>' +
+          '<th>活动内容</th>' +
+          '<th style="width:120px">备注</th>' +
+          '<th style="width:50px">完成</th>' +
+        '</tr>';
+
+        var bodyRows = '';
+        routine.forEach(function(item) {
+          if (item.section) {
+            bodyRows += '<tr class="section-row"><td colspan="4">' + item.section + '</td></tr>';
+          } else {
+            bodyRows += '<tr>' +
+              '<td class="time-col">' + item.time + '</td>' +
+              '<td class="activity-col">' + item.activity + '</td>' +
+              '<td class="note-col"></td>' +
+              '<td class="check-col"><span class="check-box"></span></td>' +
+            '</tr>';
+          }
+        });
+
+        var paper = '<section class="paper">' +
+          '<div class="paper-header">' +
+            '<span>姓名：<span class="underline-field">&nbsp;</span></span>' +
+            '<span>日期：<span class="underline-field">&nbsp;</span></span>' +
+          '</div>' +
+          '<div class="paper-title">作息时间表</div>' +
+          '<table class="routine-table">' +
+            '<thead>' + headerRow + '</thead>' +
+            '<tbody>' + bodyRows + '</tbody>' +
+          '</table>' +
+          '<div class="paper-footer"><span>早睡早起 · 规律作息 · 健康成长</span></div>' +
+        '</section>';
+
+        return paper;
+      }
+
+      function renderAll() {
+        var html = renderPaper();
+        var isMobile = window.matchMedia("(max-width: 1024px)").matches;
+        if (isMobile) {
+          document.getElementById('output').innerHTML = '<div class="paper-stage"><div class="paper-scaler">' + html + '</div></div>';
+        } else {
+          document.getElementById('output').innerHTML = html;
+        }
+        updateScale();
+      }
+
+      var PAPER_W = 794;
+      function updateScale() {
+        var stage = document.querySelector('.paper-stage');
+        if (!stage) return;
+        var scaler = stage.querySelector('.paper-scaler');
+        var paper = stage.querySelector('.paper');
+        if (!scaler || !paper) return;
+        var avail = window.innerWidth - 24;
+        var scale = Math.min(1, avail / PAPER_W);
+        scaler.style.transform = 'scale(' + scale + ')';
+        scaler.style.transformOrigin = 'top center';
+        scaler.style.width = PAPER_W + 'px';
+        stage.style.width = '100%';
+        stage.style.height = (paper.offsetHeight * scale) + 'px';
+        stage.style.overflow = 'hidden';
+      }
+
+      renderAll();
+      window.addEventListener('resize', function() { renderAll(); });
+      document.getElementById('btnPrint').addEventListener('click', function() { window.print(); });
+    })();
+  </script>
+</body>
+</html>
