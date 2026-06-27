@@ -88,43 +88,24 @@ body::after {
 
 /* 主题切换按钮 */
 .theme-toggle {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--btn-bg);
   cursor: pointer;
-  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  transition: all .3s cubic-bezier(.4,0,.2,1);
+  font-size: 16px;
+  transition: all .2s cubic-bezier(.4,0,.2,1);
+  flex-shrink: 0;
+  color: var(--muted);
 }
-[data-theme="dark"] .theme-toggle {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: #f5f0e6;
-  box-shadow: 0 4px 20px rgba(0,0,0,.3);
-}
-[data-theme="dark"] .theme-toggle:hover {
-  background: rgba(255,255,255,0.15);
-  transform: rotate(30deg) scale(1.1);
-  box-shadow: 0 8px 30px rgba(212,168,75,.3);
-}
-[data-theme="light"] .theme-toggle {
-  background: #faf9f5;
-  border: 1px solid #e8e6dc;
-  color: #141413;
-  box-shadow: 0 4px 20px rgba(0,0,0,.08);
-}
-[data-theme="light"] .theme-toggle:hover {
-  background: #fff;
-  transform: rotate(30deg) scale(1.1);
-  box-shadow: 0 8px 30px rgba(0,0,0,.12);
+.theme-toggle:hover {
+  color: var(--text-color);
+  border-color: var(--gold);
+  background: var(--btn-hover-bg);
 }
 
 /* ============================================================

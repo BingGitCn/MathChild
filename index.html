@@ -420,14 +420,15 @@
       .hero h1 { font-size: 28px; }
       .cards { grid-template-columns: 1fr; }
       .hero-paper { width: 64px; height: 80px; }
-      .theme-toggle { top: 12px; right: 12px; width: 42px; height: 42px; font-size: 18px; }
     }
   </style>
 </head>
 <body>
-  <button class="theme-toggle" id="themeToggle" title="切换主题">☀</button>
+  <header class="topbar" style="position:fixed;top:0;left:0;right:0;height:56px;background:rgba(26,26,26,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06);z-index:100;display:flex;align-items:center;justify-content:flex-end;padding:0 20px;">
+    <button class="theme-toggle" id="themeToggle" title="切换主题" style="position:static;">☀</button>
+  </header>
 
-  <div class="container">
+  <div class="container" style="margin-top:56px;">
     <div class="hero">
       <div class="hero-decoration">
         <div class="hero-paper"></div>
