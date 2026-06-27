@@ -323,8 +323,9 @@ body::after {
   color: #1a1a1a;
 }
 [data-theme="light"] .op-chip.active {
-  background: var(--gold);
-  color: #fff;
+  background: transparent;
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 /* 分段控件 seg */
@@ -356,8 +357,9 @@ body::after {
   box-shadow: 0 1px 3px rgba(0,0,0,.3);
 }
 [data-theme="light"] .seg-btn.active {
-  background: var(--gold);
-  color: #fff;
+  background: transparent;
+  color: var(--gold);
+  border: 1.5px solid var(--gold);
 }
 
 /* range slider */
