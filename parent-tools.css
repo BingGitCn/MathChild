@@ -38,6 +38,8 @@
   --btn-bg: rgba(0,0,0,0.03);
   --btn-border: rgba(0,0,0,0.08);
   --btn-hover-bg: rgba(0,0,0,0.06);
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.08);
+  --card-shadow-hover: 0 8px 30px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.08);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }

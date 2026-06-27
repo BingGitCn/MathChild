@@ -40,6 +40,8 @@
       --text-primary: #1e293b;
       --text-secondary: #475569;
       --gold: #2563eb;
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.08);
+      --card-shadow-hover: 0 8px 30px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.08);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -309,7 +311,7 @@
     [data-theme="light"] .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.08);
+      box-shadow: var(--card-shadow);
       color: inherit;
     }
     .card::before {
@@ -338,7 +340,7 @@
     }
     [data-theme="light"] .card:hover {
       border-color: var(--card-hover-border);
-      box-shadow: 0 8px 30px rgba(0,0,0,.12);
+      box-shadow: var(--card-shadow-hover);
     }
     .card:hover::before {
       transform: scaleX(1);
