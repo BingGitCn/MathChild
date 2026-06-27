@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a1a1a">
+  <title>读书笔记 · 纸上时光</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="parent-tools.css">
+  <style>
+    .note-section { margin-bottom: 24px; }
+    .note-section h3 {
+      font-family: var(--ff-display);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .05em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .field-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .field-row label {
+      font-family: var(--ff-display);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-color);
+      min-width: 60px;
+      line-height: 38px;
+    }
+    .field-input {
+      flex: 1;
+      min-width: 160px;
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-family: var(--ff-display);
+      font-size: 14px;
+      color: var(--text-color);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .field-input:focus { border-color: var(--gold); }
+    .field-textarea {
+      width: 100%;
+      min-height: 100px;
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: var(--ff-display);
+      font-size: 14px;
+      color: var(--text-color);
+      outline: none;
+      resize: vertical;
+      line-height: 1.8;
+      transition: border-color .15s;
+    }
+    .field-textarea:focus { border-color: var(--gold); }
+    .hint { font-size: 11px; color: var(--muted); margin-top: 4px; font-family: var(--ff-mono); }
+
+    /* A4 预览样式 */
+    .reading-title {
+      font-family: var(--ff-display);
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      margin: 60px 0 34px;
+      color: var(--ink);
+      text-align: center;
+    }
+    .reading-meta {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 28px;
+      font-family: var(--ff-display);
+      font-size: 14px;
+      color: var(--ink);
+    }
+    .reading-meta span { font-weight: 700; }
+    .reading-body h4 {
+      font-family: var(--ff-display);
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--ink);
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 4px;
+      margin: 24px 0 12px;
+    }
+    .reading-body .content-block {
+      font-family: var(--ff-display);
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 2;
+      white-space: pre-wrap;
+      min-height: 48px;
+    }
+    .lined-area {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 12px 14px;
+      min-height: 80px;
+      background: repeating-linear-gradient(
+        transparent, transparent 27px, #e0ddd5 27px, #e0ddd5 28px
+      );
+      background-attachment: local;
+      line-height: 28px;
+    }
+    .lined-area .content-block {
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">
+        <a href="index.html" class="back-link" title="返回首页">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <span class="logo-icon">&#128214;</span>
+        <div class="logo-text">
+          <h1>读书笔记</h1>
+          <p>Reading Notes · A4 Print</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="btnPrint" class="ghost-btn" title="打印">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span class="label">打印</span>
+        </button>
+        <button id="btnEdit" class="ghost-btn" title="编辑">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <span class="label">编辑</span>
+        </button>
+        <button class="theme-toggle" id="themeToggle" title="切换主题">&#9788;</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div id="output" class="output"></div>
+  </main>
+
+  <script>
+    (function() {
+      "use strict";
+
+      var STORAGE_KEY = 'reading-notes-data';
+
+      var state = {
+        book: '',
+        author: '',
+        date: '',
+        quotes: '',
+        notes: '',
+        editing: false
+      };
+
+      function save() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          book: state.book, author: state.author, date: state.date,
+          quotes: state.quotes, notes: state.notes
+        }));
+      }
+
+      function load() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            var d = JSON.parse(raw);
+            state.book = d.book || '';
+            state.author = d.author || '';
+            state.date = d.date || '';
+            state.quotes = d.quotes || '';
+            state.notes = d.notes || '';
+          }
+        } catch(e) {}
+      }
+
+      function escHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+      function escAttr(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+
+      function renderPaper() {
+        var meta = '';
+        if (state.book || state.author || state.date) {
+          meta = '<div class="reading-meta">';
+          if (state.book) meta += '<span>' + escHtml(state.book) + '</span>';
+          if (state.author) meta += '<span style="font-weight:400">作者：' + escHtml(state.author) + '</span>';
+          if (state.date) meta += '<span style="font-weight:400">' + escHtml(state.date) + '</span>';
+          meta += '</div>';
+        }
+
+        var quotesBlock = '';
+        if (state.quotes.trim()) {
+          quotesBlock = '<h4>好词好句</h4><div class="lined-area"><div class="content-block">' + escHtml(state.quotes) + '</div></div>';
+        } else {
+          quotesBlock = '<h4>好词好句</h4><div class="lined-area"><div class="content-block" style="color:#bbb">在此摘录书中精彩语句……</div></div>';
+        }
+
+        var notesBlock = '';
+        if (state.notes.trim()) {
+          notesBlock = '<h4>读后感想</h4><div class="lined-area"><div class="content-block">' + escHtml(state.notes) + '</div></div>';
+        } else {
+          notesBlock = '<h4>读后感想</h4><div class="lined-area"><div class="content-block" style="color:#bbb">写下你的读书心得……</div></div>';
+        }
+
+        return '<section class="paper">' +
+          '<div class="paper-header">' +
+            '<span>姓名：<span class="underline-field">&nbsp;</span></span>' +
+            '<span>班级：<span class="underline-field">&nbsp;</span></span>' +
+          '</div>' +
+          '<div class="reading-title">读 书 笔 记</div>' +
+          meta +
+          '<div class="reading-body">' +
+            quotesBlock +
+            notesBlock +
+          '</div>' +
+          '<div class="paper-footer">阅读是最好的成长 · 摘抄积累 · 常读常新</div>' +
+        '</section>';
+      }
+
+      function renderEditPanel() {
+        return '<div class="edit-panel">' +
+          '<div class="note-section">' +
+            '<h3>书籍信息</h3>' +
+            '<div class="field-row">' +
+              '<label>书名</label>' +
+              '<input type="text" class="field-input" id="editBook" value="' + escAttr(state.book) + '" placeholder="输入书名">' +
+            '</div>' +
+            '<div class="field-row">' +
+              '<label>作者</label>' +
+              '<input type="text" class="field-input" id="editAuthor" value="' + escAttr(state.author) + '" placeholder="输入作者">' +
+            '</div>' +
+            '<div class="field-row">' +
+              '<label>日期</label>' +
+              '<input type="text" class="field-input" id="editDate" value="' + escAttr(state.date) + '" placeholder="2025-01-01">' +
+            '</div>' +
+          '</div>' +
+          '<div class="note-section">' +
+            '<h3>好词好句</h3>' +
+            '<textarea class="field-textarea" id="editQuotes" placeholder="摘录书中打动你的语句……">' + escHtml(state.quotes) + '</textarea>' +
+          '</div>' +
+          '<div class="note-section">' +
+            '<h3>读后感想</h3>' +
+            '<textarea class="field-textarea" id="editNotes" placeholder="写下你的读书心得……">' + escHtml(state.notes) + '</textarea>' +
+          '</div>' +
+          '<div class="edit-actions">' +
+            '<button class="primary-btn" id="previewBtn" style="flex:1">预览 A4</button>' +
+            '<button class="primary-btn" id="savePrintBtn" style="flex:1;background:var(--accent)">保存并打印</button>' +
+          '</div>' +
+          '<div class="hint">编辑内容自动保存到浏览器，关掉页面再回来也不丢失。</div>' +
+        '</div>';
+      }
+
+      function render() {
+        var output = document.getElementById('output');
+        if (state.editing) {
+          output.innerHTML = renderEditPanel();
+          bindEditPanel();
+        } else {
+          var html = renderPaper();
+          var isMobile = window.matchMedia("(max-width: 1024px)").matches;
+          if (isMobile) {
+            output.innerHTML = '<div class="paper-stage"><div class="paper-scaler">' + html + '</div></div>';
+          } else {
+            output.innerHTML = html;
+          }
+          updateScale();
+        }
+      }
+
+      function bindEditPanel() {
+        var fields = { editBook: 'book', editAuthor: 'author', editDate: 'date', editQuotes: 'quotes', editNotes: 'notes' };
+        Object.keys(fields).forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) {
+            el.addEventListener('input', function() {
+              state[fields[id]] = this.value;
+              save();
+            });
+          }
+        });
+
+        document.getElementById('previewBtn').addEventListener('click', function() {
+          state.editing = false;
+          render();
+        });
+
+        document.getElementById('savePrintBtn').addEventListener('click', function() {
+          save();
+          state.editing = false;
+          render();
+          setTimeout(function() { window.print(); }, 200);
+        });
+      }
+
+      var PAPER_W = 794;
+      function updateScale() {
+        var stage = document.querySelector('.paper-stage');
+        if (!stage) return;
+        var scaler = stage.querySelector('.paper-scaler');
+        var paper = stage.querySelector('.paper');
+        if (!scaler || !paper) return;
+        var avail = window.innerWidth - 24;
+        var scale = Math.min(1, avail / PAPER_W);
+        scaler.style.transform = 'scale(' + scale + ')';
+        scaler.style.transformOrigin = 'top center';
+        scaler.style.width = PAPER_W + 'px';
+        stage.style.width = '100%';
+        stage.style.height = (paper.offsetHeight * scale) + 'px';
+        stage.style.overflow = 'hidden';
+      }
+
+      load();
+      render();
+
+      document.getElementById('btnPrint').addEventListener('click', function() {
+        if (state.editing) { state.editing = false; render(); }
+        setTimeout(function() { window.print(); }, 100);
+      });
+      document.getElementById('btnEdit').addEventListener('click', function() {
+        state.editing = !state.editing;
+        var label = this.querySelector('.label');
+        if (label) label.textContent = state.editing ? '预览' : '编辑';
+        render();
+      });
+
+      window.addEventListener('resize', function() { if (!state.editing) updateScale(); });
+    })();
+
+    (function() {
+      var toggle = document.getElementById('themeToggle');
+      var html = document.documentElement;
+      var savedTheme = localStorage.getItem('theme') || 'light';
+      html.setAttribute('data-theme', savedTheme);
+      updateIcon(savedTheme);
+      toggle.addEventListener('click', function() {
+        var current = html.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateIcon(next);
+      });
+      function updateIcon(theme) {
+        toggle.textContent = theme === 'dark' ? '\u2600' : '\u263E';
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -10,38 +10,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
+      --bg: #1c1a17;
+      --bg-soft: #252220;
+      --line: #332e28;
+      --muted: #8a8070;
+      --gold: #d4a84b;
+      --crimson: #c8324c;
+      --text-primary: #f5f0e6;
+      --text-secondary: #b5b0a5;
       --paper: #fdfbf6;
       --ink: #1c1b1a;
       --ink-soft: #4a4844;
-      --crimson: #c8324c;
       --accent: #2d5f3f;
-      --bg: #1a1a1a;
-      --bg-soft: #232323;
-      --line: #3a3835;
-      --muted: #8a857d;
-      --gold: #d4a84b;
       --ff-display: "Noto Serif SC", "Songti SC", serif;
       --ff-mono: "JetBrains Mono", "Courier New", monospace;
-      --card-bg: var(--bg-soft);
-      --card-border: var(--line);
-      --card-hover-border: rgba(212,168,75,.3);
-      --text-primary: #f5f0e6;
-      --text-secondary: #e8e3da;
     }
-
     [data-theme="light"] {
-      --bg: #f5f4ed;
-      --bg-soft: #faf9f5;
-      --line: #e8e6dc;
-      --muted: #6b6a64;
-      --card-bg: #faf9f5;
-      --card-border: #e8e6dc;
-      --card-hover-border: #1B365D;
-      --text-primary: #141413;
-      --text-secondary: #3d3d3a;
+      --bg: #f3efe6;
+      --bg-soft: #fffefa;
+      --line: #e0d8c8;
+      --muted: #8a8270;
+      --text-primary: #2a2520;
+      --text-secondary: #6b6358;
       --gold: #1B365D;
-      --card-shadow: 0 4px 24px rgba(0,0,0,0.05);
-      --card-shadow-hover: 0 8px 32px rgba(0,0,0,0.08);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,519 +42,456 @@
       background: var(--bg);
       color: var(--text-secondary);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
       overflow-x: hidden;
-      transition: background .4s ease, color .4s ease;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image:
-        radial-gradient(circle at 20% 30%, rgba(212,168,75,.04), transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(200,50,76,.03), transparent 50%);
-      pointer-events: none;
-      opacity: var(--bg-opacity, 1);
-    }
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-      opacity: var(--noise-opacity, 0.015);
-      pointer-events: none;
-      z-index: 0;
+      transition: background .5s ease, color .5s ease;
     }
 
-    [data-theme="light"] body::before,
-    [data-theme="light"] body::after {
-      opacity: 0;
-    }
-
-    .container {
-      max-width: 720px;
-      width: 100%;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* 主题切换按钮 */
+    /* 主题切换 */
     .theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      transition: all .3s cubic-bezier(.4,0,.2,1);
-    }
-    [data-theme="dark"] .theme-toggle {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: #f5f0e6;
-      box-shadow: 0 4px 20px rgba(0,0,0,.3);
-    }
-    [data-theme="dark"] .theme-toggle:hover {
-      background: rgba(255,255,255,0.15);
-      transform: rotate(30deg) scale(1.1);
-      box-shadow: 0 8px 30px rgba(212,168,75,.3);
+      position: fixed; top: 24px; right: 24px;
+      width: 44px; height: 44px; border-radius: 12px;
+      border: 1px solid rgba(212,168,75,.15); background: rgba(30,28,24,.9);
+      backdrop-filter: blur(20px); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; z-index: 1000;
+      transition: all .3s cubic-bezier(.4,0,.2,1); color: var(--muted);
     }
     [data-theme="light"] .theme-toggle {
-      background: rgba(255,255,255,0.9);
-      border: 1px solid rgba(0,0,0,0.08);
-      color: #1e293b;
-      box-shadow: 0 4px 20px rgba(0,0,0,.1);
+      background: rgba(253,251,246,.9); border-color: rgba(180,160,120,.2);
     }
-    [data-theme="light"] .theme-toggle:hover {
-      background: #fff;
-      transform: rotate(30deg) scale(1.1);
-      box-shadow: 0 8px 30px rgba(0,0,0,.15);
+    .theme-toggle:hover {
+      transform: rotate(20deg); border-color: var(--gold); color: var(--gold);
     }
 
-    .hero {
-      text-align: center;
-      margin-bottom: 64px;
-      position: relative;
+    .wrapper {
+      max-width: 860px; margin: 0 auto;
+      padding: 80px 32px 60px; position: relative; z-index: 1;
     }
-    .hero-decoration {
-      position: relative;
-      display: inline-block;
-      margin-bottom: 24px;
+
+    /* ===== Hero ===== */
+    .hero { text-align: center; margin-bottom: 72px; padding: 20px 0; }
+    .hero-mark {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 72px; height: 72px; border-radius: 20px; margin-bottom: 28px;
+      position: relative; transition: all .4s ease;
     }
-    .hero-paper {
-      width: 80px;
-      height: 100px;
-      border-radius: 4px 12px 4px 4px;
-      position: relative;
-      transform: rotate(-3deg);
-      transition: all .4s ease;
-    }
-    [data-theme="dark"] .hero-paper {
-      background: linear-gradient(135deg, var(--paper) 0%, #f5f0e6 100%);
-      box-shadow: 0 4px 20px rgba(0,0,0,.3), inset 0 0 0 1px rgba(212,168,75,.2);
-    }
-    [data-theme="light"] .hero-paper {
-      background: #fff;
-      box-shadow: 0 4px 20px rgba(0,0,0,.1), inset 0 0 0 1px rgba(0,0,0,.05);
-    }
-    .hero-paper::before {
-      content: "";
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      right: 12px;
-      height: 2px;
-      background: var(--ink-soft);
-      opacity: 0.2;
-      box-shadow: 0 8px 0 rgba(74,72,68,.15), 0 16px 0 rgba(74,72,68,.1), 0 24px 0 rgba(74,72,68,.08);
-    }
-    .hero-paper::after {
-      content: "∑";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: var(--ff-display);
-      font-size: 28px;
-      font-weight: 900;
-      color: var(--gold);
-      opacity: 0.9;
-    }
-    .hero-pen {
-      position: absolute;
-      bottom: -8px;
-      right: -20px;
-      width: 4px;
-      height: 60px;
-      border-radius: 2px;
-      transform: rotate(25deg);
-      transform-origin: top center;
-      transition: all .4s ease;
-    }
-    [data-theme="dark"] .hero-pen {
-      background: linear-gradient(180deg, var(--ink) 0%, var(--ink-soft) 80%, var(--gold) 100%);
-    }
-    [data-theme="light"] .hero-pen {
-      background: linear-gradient(180deg, #475569 0%, #64748b 80%, #2563eb 100%);
-    }
-    .hero-pen::after {
-      content: "";
-      position: absolute;
-      bottom: -4px;
-      left: -2px;
-      width: 0;
-      height: 0;
-      border-left: 4px solid transparent;
-      border-right: 4px solid transparent;
-      border-top: 8px solid var(--gold);
-    }
-    .hero h1 {
-      font-family: var(--ff-display);
-      font-size: 36px;
-      font-weight: 900;
-      letter-spacing: .08em;
-      margin-bottom: 12px;
-      transition: all .4s ease;
-    }
-    [data-theme="dark"] .hero h1 {
-      color: #f5f0e6;
-      background: linear-gradient(135deg, #f5f0e6 0%, #e8e3da 50%, var(--gold) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    [data-theme="light"] .hero h1 {
-      color: #141413;
-      background: linear-gradient(135deg, #141413 0%, #3d3d3a 50%, #1B365D 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero p {
-      font-family: var(--ff-mono);
-      font-size: 12px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-    .section {
-      margin-bottom: 48px;
-    }
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-    .section-line {
-      flex: 1;
-      height: 1px;
-      transition: background .4s ease;
-    }
-    [data-theme="dark"] .section-line {
-      background: linear-gradient(90deg, transparent, var(--line), transparent);
-    }
-    [data-theme="light"] .section-line {
-      background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
-    }
-    .section-title {
-      font-family: var(--ff-display);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: color .4s ease;
-    }
-    [data-theme="dark"] .section-title { color: var(--muted); }
-    [data-theme="light"] .section-title { color: #6b6a64; }
-    .section-title::before,
-    .section-title::after {
-      content: "";
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      opacity: 0.6;
-    }
-    [data-theme="dark"] .section-title::before,
-    [data-theme="dark"] .section-title::after {
-      background: var(--gold);
-    }
-    [data-theme="light"] .section-title::before,
-    [data-theme="light"] .section-title::after {
-      background: #1B365D;
-    }
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-    }
-    .card {
-      display: flex;
-      flex-direction: column;
-      border-radius: 16px;
-      padding: 28px 24px;
-      text-decoration: none;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: all .3s cubic-bezier(.4,0,.2,1);
-    }
-    [data-theme="dark"] .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      color: inherit;
-    }
-    [data-theme="light"] .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      box-shadow: var(--card-shadow);
-      color: inherit;
-    }
-    .card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform .3s cubic-bezier(.4,0,.2,1);
-    }
-    [data-theme="dark"] .card::before {
-      background: linear-gradient(90deg, var(--gold), var(--crimson));
-    }
-    [data-theme="light"] .card::before {
-      background: linear-gradient(90deg, #1B365D, #2D5A8A);
-    }
-    .card:hover {
-      transform: translateY(-4px);
-    }
-    [data-theme="dark"] .card:hover {
-      border-color: var(--card-hover-border);
-      box-shadow: 0 12px 32px rgba(0,0,0,.25), 0 0 0 1px rgba(212,168,75,.1);
-    }
-    [data-theme="light"] .card:hover {
-      border-color: var(--card-hover-border);
-      box-shadow: var(--card-shadow-hover);
-    }
-    .card:hover::before {
-      transform: scaleX(1);
-    }
-    .card-icon {
-      font-size: 24px;
-      margin-bottom: 16px;
-      width: 52px;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 14px;
-      transition: all .3s;
-    }
-    [data-theme="dark"] .card-icon {
-      background: linear-gradient(135deg, rgba(212,168,75,.1) 0%, rgba(212,168,75,.05) 100%);
+    [data-theme="dark"] .hero-mark {
+      background: linear-gradient(135deg, rgba(212,168,75,.12), rgba(212,168,75,.04));
       border: 1px solid rgba(212,168,75,.15);
     }
-    [data-theme="light"] .card-icon {
-      background: linear-gradient(135deg, rgba(27,54,93,.08) 0%, rgba(27,54,93,.04) 100%);
-      border: 1px solid rgba(27,54,93,.12);
+    [data-theme="light"] .hero-mark {
+      background: linear-gradient(135deg, rgba(27,54,93,.08), rgba(27,54,93,.03));
+      border: 1px solid rgba(27,54,93,.1);
     }
-    .card:hover .card-icon {
-      transform: scale(1.05);
+    .hero-mark svg { width: 32px; height: 32px; }
+    [data-theme="dark"] .hero-mark svg { stroke: var(--gold); }
+    [data-theme="light"] .hero-mark svg { stroke: var(--gold); }
+    .hero-mark::after {
+      content: ""; position: absolute; inset: -1px; border-radius: inherit;
+      opacity: 0; transition: opacity .4s;
     }
-    [data-theme="dark"] .card:hover .card-icon {
-      background: linear-gradient(135deg, rgba(212,168,75,.15) 0%, rgba(212,168,75,.08) 100%);
-      border-color: rgba(212,168,75,.25);
-      box-shadow: 0 0 20px rgba(212,168,75,.15);
+    [data-theme="dark"] .hero-mark::after { box-shadow: 0 0 32px rgba(212,168,75,.15); }
+    [data-theme="light"] .hero-mark::after { box-shadow: 0 0 32px rgba(27,54,93,.1); }
+    .hero:hover .hero-mark::after { opacity: 1; }
+
+    .hero h1 {
+      font-family: var(--ff-display); font-size: clamp(32px, 5vw, 44px);
+      font-weight: 900; letter-spacing: .1em; margin-bottom: 16px; line-height: 1.2;
     }
-    [data-theme="light"] .card:hover .card-icon {
-      background: linear-gradient(135deg, rgba(27,54,93,.12) 0%, rgba(27,54,93,.06) 100%);
-      border-color: rgba(27,54,93,.2);
-      box-shadow: 0 0 20px rgba(27,54,93,.1);
+    [data-theme="dark"] .hero h1 {
+      background: linear-gradient(135deg, #f5f0e6 0%, #e0dace 40%, var(--gold) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
+    [data-theme="light"] .hero h1 {
+      background: linear-gradient(135deg, #141413 0%, #2d2d28 40%, #1B365D 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub {
+      font-family: var(--ff-mono); font-size: 11px;
+      letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .hero-poet {
+      font-family: var(--ff-display); font-size: 15px;
+      letter-spacing: .12em; color: var(--muted);
+      opacity: 0; animation: fadeUp .8s .3s ease forwards;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Section ===== */
+    .section { margin-bottom: 56px; }
+    .section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .section-line { flex: 1; height: 1px; }
+    [data-theme="dark"] .section-line { background: linear-gradient(90deg, transparent, rgba(212,168,75,.2), transparent); }
+    [data-theme="light"] .section-line { background: linear-gradient(90deg, transparent, rgba(160,130,90,.2), transparent); }
+    .section-label {
+      font-family: var(--ff-display); font-size: 12px; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase; white-space: nowrap;
+      color: var(--muted); display: flex; align-items: center; gap: 8px;
+    }
+    .section-dot { width: 5px; height: 5px; border-radius: 50%; }
+    [data-theme="dark"] .section-dot { background: var(--gold); opacity: .6; }
+    [data-theme="light"] .section-dot { background: var(--gold); opacity: .5; }
+
+    /* ===== Cards ===== */
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+    .card {
+      display: flex; flex-direction: column; border-radius: 16px;
+      padding: 24px 20px 20px; text-decoration: none; cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: all .35s cubic-bezier(.4,0,.2,1);
+    }
+    /* 纸张底色 — 暖色调 */
+    [data-theme="dark"] .card {
+      background: #252220;
+      border: 1px solid rgba(212,168,75,.1); color: inherit;
+    }
+    [data-theme="light"] .card {
+      background: linear-gradient(135deg, #fdfbf6 0%, #f8f4ec 100%);
+      border: 1px solid rgba(180,160,120,.15); color: inherit;
+      box-shadow: 0 1px 4px rgba(140,120,80,.08);
+    }
+    /* 纸纹理：暖色横线 */
+    .card::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      background: repeating-linear-gradient(
+        transparent, transparent 27px,
+        rgba(160,130,90,.06) 27px, rgba(160,130,90,.06) 28px
+      );
+    }
+    [data-theme="dark"] .card::before {
+      background: repeating-linear-gradient(
+        transparent, transparent 27px,
+        rgba(212,168,75,.04) 27px, rgba(212,168,75,.04) 28px
+      );
+    }
+    /* 右下角水印字符 */
+    .card::after {
+      content: ""; position: absolute; right: -8px; bottom: -8px;
+      font-size: 72px; font-weight: 900; opacity: 0;
+      transition: opacity .4s; pointer-events: none; line-height: 1; z-index: 0;
+    }
+    [data-theme="dark"] .card::after { color: var(--gold); }
+    [data-theme="light"] .card::after { color: var(--text-primary); }
+    .card:hover::after { opacity: .03; }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(212,168,75,.2);
+      box-shadow: 0 8px 32px rgba(100,80,40,.2);
+    }
+    [data-theme="light"] .card:hover {
+      border-color: rgba(180,140,80,.25);
+      box-shadow: 0 8px 32px rgba(140,110,60,.1);
+    }
+
+    .card-icon {
+      width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+      border-radius: 10px; margin-bottom: 14px; position: relative; z-index: 1;
+      transition: all .3s cubic-bezier(.4,0,.2,1);
+    }
+    .card-icon svg {
+      width: 20px; height: 20px; stroke-width: 1.8; fill: none; stroke: currentColor;
+    }
+    [data-theme="dark"] .card-icon { background: rgba(212,168,75,.08); color: var(--gold); }
+    [data-theme="light"] .card-icon { background: rgba(27,54,93,.06); color: var(--gold); }
+    .card:hover .card-icon { transform: scale(1.08); }
+
     .card h3 {
-      font-family: var(--ff-display);
-      font-size: 17px;
-      font-weight: 900;
-      margin-bottom: 8px;
-      transition: color .2s;
+      font-family: var(--ff-display); font-size: 15px; font-weight: 900;
+      margin-bottom: 6px; position: relative; z-index: 1;
+      transition: color .25s;
     }
-    [data-theme="dark"] .card h3 { color: #f5f0e6; }
-    [data-theme="light"] .card h3 { color: #1e293b; }
-    .card:hover h3 {
-      transition: color .2s;
-    }
-    [data-theme="dark"] .card:hover h3 { color: var(--gold); }
-    [data-theme="light"] .card:hover h3 { color: #1B365D; }
+    [data-theme="dark"] .card h3 { color: var(--text-primary); }
+    [data-theme="light"] .card h3 { color: var(--text-primary); }
+    .card:hover h3 { color: var(--gold); }
+
     .card p {
-      font-size: 12px;
-      line-height: 1.6;
+      font-size: 12px; line-height: 1.6; color: var(--muted);
+      position: relative; z-index: 1;
     }
-    [data-theme="dark"] .card p { color: var(--muted); }
-    [data-theme="light"] .card p { color: #6b6a64; }
+
+    /* 各卡片水印字符 */
+    .card--math::after { content: "∑"; }
+    .card--mul::after { content: "×"; }
+    .card--cmp::after { content: "≷"; }
+    .card--tian::after { content: "字"; font-size: 64px; }
+    .card--py::after { content: "ㄅ"; font-size: 64px; }
+    .card--write::after { content: "文"; font-size: 64px; }
+    .card--grid::after { content: "▦"; }
+    .card--sched::after { content: "课"; font-size: 64px; }
+    .card--routine::after { content: "时"; font-size: 64px; }
+    .card--todo::after { content: "✓"; }
+    .card--read::after { content: "读"; font-size: 64px; }
+    .card--menu::after { content: "食"; font-size: 64px; }
+    .card--check::after { content: "卡"; font-size: 64px; }
+    .card--score::after { content: "绩"; font-size: 64px; }
+    .card--plan::after { content: "划"; font-size: 64px; }
+
+    /* Footer */
     .footer {
-      text-align: center;
-      padding: 32px 0 16px;
-      font-family: var(--ff-mono);
-      font-size: 11px;
-      letter-spacing: .08em;
-      opacity: 0.6;
+      text-align: center; padding: 40px 0 20px;
+      font-family: var(--ff-mono); font-size: 11px;
+      letter-spacing: .1em; color: var(--muted); opacity: .5;
     }
-    .footer::before {
-      content: "";
-      display: block;
-      width: 40px;
-      height: 1px;
-      margin: 0 auto 16px;
+
+    @media (max-width: 700px) {
+      .cards { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .wrapper { padding: 72px 16px 40px; }
+      .card { padding: 20px 16px 16px; }
+      .card-icon { width: 36px; height: 36px; }
+      .card h3 { font-size: 14px; }
     }
-    [data-theme="dark"] .footer { color: var(--muted); }
-    [data-theme="dark"] .footer::before { background: var(--line); }
-    [data-theme="light"] .footer { color: #94a3b8; }
-    [data-theme="light"] .footer::before { background: rgba(0,0,0,0.1); }
-    @media (max-width: 480px) {
-      .hero h1 { font-size: 28px; }
+    @media (max-width: 420px) {
       .cards { grid-template-columns: 1fr; }
-      .hero-paper { width: 64px; height: 80px; }
     }
   </style>
 </head>
 <body>
-  <header class="topbar" style="position:fixed;top:0;left:0;right:0;height:56px;background:rgba(26,26,26,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06);z-index:100;display:flex;align-items:center;justify-content:flex-end;padding:0 20px;">
-    <button class="theme-toggle" id="themeToggle" title="切换主题" style="position:static;">☀</button>
-  </header>
+  <button class="theme-toggle" id="themeToggle" title="切换主题">&#9788;</button>
 
-  <div class="container" style="margin-top:56px;">
+  <div class="wrapper">
     <div class="hero">
-      <div class="hero-decoration">
-        <div class="hero-paper"></div>
-        <div class="hero-pen"></div>
+      <div class="hero-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+          <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+        </svg>
       </div>
       <h1>纸上时光</h1>
-      <p>MathChild · Print Tools</p>
+      <p class="hero-sub">MathChild · Print Tools</p>
+      <p class="hero-poet" id="heroSubtitle"></p>
     </div>
 
+    <!-- 算术手札 -->
     <div class="section">
-      <div class="section-header">
+      <div class="section-head">
         <div class="section-line"></div>
-        <div class="section-title">算术手札</div>
+        <div class="section-label"><span class="section-dot"></span>算术手札</div>
         <div class="section-line"></div>
       </div>
       <div class="cards">
-        <a href="arithmetic.html" class="card">
-          <div class="card-icon">∑</div>
+        <a href="arithmetic.html" class="card card--math">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M4.5 3v18M12 3v18M19.5 3v18M3 7.5h4M3 12h4M3 16.5h4M16 7.5h5M16 12h5M16 16.5h5M7.5 3h9M7.5 21h9"/></svg>
+          </div>
           <h3>口算练习</h3>
           <p>加减乘除，三档难度，A4 打印即练</p>
         </a>
-        <a href="multiplication.html" class="card">
-          <div class="card-icon">×</div>
+        <a href="multiplication.html" class="card card--mul">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg>
+          </div>
           <h3>九九乘法表</h3>
           <p>乘法口诀，可显示/隐藏答案</p>
         </a>
-        <a href="compare.html" class="card">
-          <div class="card-icon">≷</div>
+        <a href="compare.html" class="card card--cmp">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/><path d="M15 5l-7 7 7 7" opacity=".4"/></svg>
+          </div>
           <h3>比大小</h3>
           <p>两数比较，填 &gt; &lt; =</p>
         </a>
       </div>
     </div>
 
+    <!-- 纸上拾趣 -->
     <div class="section">
-      <div class="section-header">
+      <div class="section-head">
         <div class="section-line"></div>
-        <div class="section-title">纸上拾趣</div>
+        <div class="section-label"><span class="section-dot"></span>纸上拾趣</div>
         <div class="section-line"></div>
       </div>
       <div class="cards">
-        <a href="tianzige.html" class="card">
-          <div class="card-icon">字</div>
+        <a href="tianzige.html" class="card card--tian">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12" opacity=".4"/></svg>
+          </div>
           <h3>田字格</h3>
           <p>练好汉字，一笔一划</p>
         </a>
-        <a href="pinyin-paper.html" class="card">
-          <div class="card-icon">ㄅ</div>
+        <a href="pinyin-paper.html" class="card card--py">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="10" x2="21" y2="10" opacity=".5"/><line x1="3" y1="14" x2="21" y2="14" opacity=".5"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </div>
           <h3>拼音练习纸</h3>
           <p>四线三格，练好拼音基础</p>
         </a>
-        <a href="writing-paper.html" class="card">
-          <div class="card-icon">📝</div>
+        <a href="writing-paper.html" class="card card--write">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21" opacity=".3"/><line x1="15" y1="3" x2="15" y2="21" opacity=".3"/><line x1="3" y1="9" x2="21" y2="9" opacity=".3"/><line x1="3" y1="15" x2="21" y2="15" opacity=".3"/></svg>
+          </div>
           <h3>作文稿纸</h3>
           <p>方格稿纸，练习写作</p>
         </a>
       </div>
     </div>
 
+    <!-- 晨课暮习 -->
     <div class="section">
-      <div class="section-header">
+      <div class="section-head">
         <div class="section-line"></div>
-        <div class="section-title">晨课暮习</div>
+        <div class="section-label"><span class="section-dot"></span>晨课暮习</div>
         <div class="section-line"></div>
       </div>
       <div class="cards">
-        <a href="grid-paper.html" class="card">
-          <div class="card-icon">▦</div>
+        <a href="grid-paper.html" class="card card--grid">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+          </div>
           <h3>格子纸</h3>
           <p>数学画图，坐标练习</p>
         </a>
-        <a href="schedule.html" class="card">
-          <div class="card-icon">📅</div>
+        <a href="schedule.html" class="card card--sched">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+          </div>
           <h3>课程表</h3>
           <p>学校课程安排，打印贴墙</p>
         </a>
-        <a href="daily-routine.html" class="card">
-          <div class="card-icon">⏰</div>
+        <a href="daily-routine.html" class="card card--routine">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+          </div>
           <h3>作息时间表</h3>
           <p>规律作息，健康成长</p>
         </a>
       </div>
     </div>
 
+    <!-- 手边好用 -->
     <div class="section">
-      <div class="section-header">
+      <div class="section-head">
         <div class="section-line"></div>
-        <div class="section-title">学习足迹</div>
+        <div class="section-label"><span class="section-dot"></span>手边好用</div>
         <div class="section-line"></div>
       </div>
       <div class="cards">
-        <a href="practice-log.html" class="card">
-          <div class="card-icon">📋</div>
+        <a href="todo-list.html" class="card card--todo">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
+          <h3>待办清单</h3>
+          <p>输入事项，打印 A4，逐项打勾</p>
+        </a>
+        <a href="reading-notes.html" class="card card--read">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          </div>
+          <h3>读书笔记</h3>
+          <p>摘录好句，写读后感，打印存档</p>
+        </a>
+        <a href="weekly-menu.html" class="card card--menu">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><line x1="7" y1="2" x2="7" y2="13"/><path d="M21 15a2 2 0 01-2 2h-3l-1 5H7l-1-5H4a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <h3>每周菜单</h3>
+          <p>安排三餐，打印贴冰箱</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- 学习足迹 -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-line"></div>
+        <div class="section-label"><span class="section-dot"></span>学习足迹</div>
+        <div class="section-line"></div>
+      </div>
+      <div class="cards">
+        <a href="practice-log.html" class="card card--check">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
           <h3>每日打卡</h3>
           <p>记录练习时光，见证每日努力</p>
         </a>
-        <a href="score-tracker.html" class="card">
-          <div class="card-icon">📊</div>
+        <a href="score-tracker.html" class="card card--score">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+          </div>
           <h3>成绩档案</h3>
           <p>跟踪正确率变化，看见进步轨迹</p>
         </a>
-        <a href="study-plan.html" class="card">
-          <div class="card-icon">📅</div>
+        <a href="study-plan.html" class="card card--plan">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><path d="M9 16l2 2 4-4"/></svg>
+          </div>
           <h3>周计划</h3>
           <p>规划每周学习，养成良好习惯</p>
         </a>
       </div>
     </div>
 
-    <div class="footer">
-      Made with ❤ for 纸上时光
-    </div>
+    <div class="footer">Made with &#10084; for &#31216;&#19978;&#26102;&#20809;</div>
   </div>
 
   <script>
     (function() {
+      var el = document.getElementById('heroSubtitle');
+      if (!el) return;
+      var now = new Date();
+      var m = now.getMonth() + 1;
+      var d = now.getDate();
+      var holidays = [
+        [1,1,'新年伊始，万象更新'],[2,14,'以笔为媒，写一封春天的情书'],
+        [3,8,'春风十里，写给每一个她'],[4,1,'纸上的世界，比远方更远'],
+        [5,1,'劳动最光荣，落笔见真章'],[5,4,'青春正当时，莫负好时光'],
+        [6,1,'童年是一本写不完的书'],[9,10,'师恩如墨，润物无声'],
+        [10,1,'山河远阔，纸上可游'],[12,25,'岁末温暖，纸上可寄']
+      ];
+      var lunarH = [
+        [2,17,'元宵灯火暖，落笔亦生花'],[6,19,'粽香端午，笔墨安康'],
+        [8,25,'月下读书，清风自来'],[10,25,'登高望远，落笔从容']
+      ];
+      var solarTerms = [
+        [1,5,'寒梅初绽，正好读书'],[1,20,'岁寒知松柏，纸上见真心'],
+        [2,3,'春风又绿江南岸，落笔生花正当时'],[2,18,'好雨知时节，润笔也润心'],
+        [3,5,'春雷一声万物醒，提笔写字意气生'],[3,20,'昼夜平分，笔墨均好'],
+        [4,4,'清明时节，且读且思'],[4,20,'谷雨春茶香，提笔写文章'],
+        [5,5,'夏日初长，正是读书好时节'],[5,21,'小满即安，落笔从容'],
+        [6,5,'忙里偷闲读一页，芒种不忙心自宽'],[6,21,'蝉鸣夏日长，正好读书忙'],
+        [7,7,'蝉声里写作业，也算盛夏一景'],[7,22,'暑气蒸腾，纸上自有清凉'],
+        [8,7,'秋风起，笔墨香'],[8,23,'暑去秋来，读书正当时'],
+        [9,7,'白露为霜，书中自有好时光'],[9,22,'秋色平分，落笔有声'],
+        [10,8,'寒露凝珠，书香暖心'],[10,23,'霜叶红于二月花，落笔亦可胜春华'],
+        [11,7,'围炉读书，温暖一冬'],[11,22,'窗外小雪，纸上温暖'],
+        [12,6,'大雪纷飞，且在纸上落一场'],[12,21,'长夜漫漫，书中好入梦']
+      ];
+      var seasons = [[3,5,'春风十里，不如落笔有声'],[6,5,'蝉鸣夏日长，正好读书忙'],[9,5,'秋风起，笔墨香'],[12,5,'围炉读书，温暖一冬']];
+      var text = null;
+      for (var i = 0; i < holidays.length; i++) { if (m===holidays[i][0] && d===holidays[i][1]) { text=holidays[i][2]; break; } }
+      if (!text) for (var j = 0; j < lunarH.length; j++) { if (m===lunarH[j][0] && d===lunarH[j][1]) { text=lunarH[j][2]; break; } }
+      if (!text) {
+        var best = 999;
+        for (var k = 0; k < solarTerms.length; k++) {
+          var dist = Math.abs((m*100+d)-(solarTerms[k][0]*100+solarTerms[k][1]));
+          if (dist < best) { best = dist; text = solarTerms[k][2]; }
+        }
+      }
+      if (!text) {
+        for (var s = seasons.length-1; s >= 0; s--) { if (m >= seasons[s][0]) { text = seasons[s][2]; break; } }
+        if (!text) text = seasons[0][2];
+      }
+      el.textContent = text;
+    })();
+
+    (function() {
       var toggle = document.getElementById('themeToggle');
       var html = document.documentElement;
-
-      // 读取本地存储
-      var savedTheme = localStorage.getItem('theme') || 'light';
-      html.setAttribute('data-theme', savedTheme);
-      updateIcon(savedTheme);
-
+      var saved = localStorage.getItem('theme') || 'light';
+      html.setAttribute('data-theme', saved);
+      updateIcon(saved);
       toggle.addEventListener('click', function() {
-        var current = html.getAttribute('data-theme');
-        var next = current === 'dark' ? 'light' : 'dark';
+        var cur = html.getAttribute('data-theme');
+        var next = cur === 'dark' ? 'light' : 'dark';
         html.setAttribute('data-theme', next);
         localStorage.setItem('theme', next);
         updateIcon(next);
       });
-
-      function updateIcon(theme) {
-        toggle.textContent = theme === 'dark' ? '☀' : '☾';
-      }
+      function updateIcon(t) { toggle.textContent = t === 'dark' ? '\u2600' : '\u263E'; }
     })();
   </script>
 </body>
