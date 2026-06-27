@@ -3,38 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1a1a1a">
-  <title>纸上时光 · MathChild</title>
+  <meta name="theme-color" content="#16a34a">
+  <title>PaperKit - 纸间小印迹</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #1c1a17;
-      --bg-soft: #252220;
-      --line: #332e28;
-      --muted: #8a8070;
-      --gold: #d4a84b;
-      --crimson: #c8324c;
-      --text-primary: #f5f0e6;
-      --text-secondary: #b5b0a5;
-      --paper: #fdfbf6;
-      --ink: #1c1b1a;
-      --ink-soft: #4a4844;
-      --accent: #2d5f3f;
-      --ff-display: "Noto Serif SC", "Songti SC", serif;
+      --bg: #fafafa;
+      --bg-soft: #f4f4f5;
+      --line: #e4e4e7;
+      --muted: #71717a;
+      --primary: #16a34a;
+      --primary-hover: #15803d;
+      --text-primary: #18181b;
+      --text-secondary: #52525b;
+      --paper: #ffffff;
+      --ink: #18181b;
+      --accent: #16a34a;
+      --ff-display: "Inter", "Noto Sans SC", system-ui, -apple-system, sans-serif;
       --ff-mono: "JetBrains Mono", "Courier New", monospace;
     }
-    [data-theme="light"] {
-      --bg: #f3efe6;
-      --bg-soft: #fffefa;
-      --line: #e0d8c8;
-      --muted: #8a8270;
-      --text-primary: #2a2520;
-      --text-secondary: #6b6358;
-      --gold: #1B365D;
+    [data-theme="dark"] {
+      --bg: #09090b;
+      --bg-soft: #18181b;
+      --line: #27272a;
+      --muted: #a1a1aa;
+      --primary: #22c55e;
+      --primary-hover: #16a34a;
+      --text-primary: #fafafa;
+      --text-secondary: #a4a4aa;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { -webkit-text-size-adjust: 100%; }
     body {
@@ -43,441 +42,133 @@
       color: var(--text-secondary);
       min-height: 100vh;
       overflow-x: hidden;
-      transition: background .5s ease, color .5s ease;
+      transition: background .3s ease, color .3s ease;
     }
-
-    /* 主题切换 */
     .theme-toggle {
-      position: fixed; top: 24px; right: 24px;
-      width: 44px; height: 44px; border-radius: 12px;
-      border: 1px solid rgba(212,168,75,.15); background: rgba(30,28,24,.9);
+      position: fixed; top: 20px; right: 20px;
+      width: 40px; height: 40px; border-radius: 10px;
+      border: 1px solid var(--line); background: var(--paper);
       backdrop-filter: blur(20px); cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      font-size: 18px; z-index: 1000;
-      transition: all .3s cubic-bezier(.4,0,.2,1); color: var(--muted);
+      font-size: 16px; z-index: 1000;
+      transition: all .2s ease; color: var(--muted);
     }
-    [data-theme="light"] .theme-toggle {
-      background: rgba(253,251,246,.9); border-color: rgba(180,160,120,.2);
-    }
-    .theme-toggle:hover {
-      transform: rotate(20deg); border-color: var(--gold); color: var(--gold);
-    }
-
-    .wrapper {
-      max-width: 860px; margin: 0 auto;
-      padding: 80px 32px 60px; position: relative; z-index: 1;
-    }
-
-    /* ===== Hero ===== */
-    .hero { text-align: center; margin-bottom: 72px; padding: 20px 0; }
-    .hero-mark {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 72px; height: 72px; border-radius: 20px; margin-bottom: 28px;
-      position: relative; transition: all .4s ease;
-    }
-    [data-theme="dark"] .hero-mark {
-      background: linear-gradient(135deg, rgba(212,168,75,.12), rgba(212,168,75,.04));
-      border: 1px solid rgba(212,168,75,.15);
-    }
-    [data-theme="light"] .hero-mark {
-      background: linear-gradient(135deg, rgba(27,54,93,.08), rgba(27,54,93,.03));
-      border: 1px solid rgba(27,54,93,.1);
-    }
-    .hero-mark svg { width: 32px; height: 32px; }
-    [data-theme="dark"] .hero-mark svg { stroke: var(--gold); }
-    [data-theme="light"] .hero-mark svg { stroke: var(--gold); }
-    .hero-mark::after {
-      content: ""; position: absolute; inset: -1px; border-radius: inherit;
-      opacity: 0; transition: opacity .4s;
-    }
-    [data-theme="dark"] .hero-mark::after { box-shadow: 0 0 32px rgba(212,168,75,.15); }
-    [data-theme="light"] .hero-mark::after { box-shadow: 0 0 32px rgba(27,54,93,.1); }
-    .hero:hover .hero-mark::after { opacity: 1; }
-
-    .hero h1 {
-      font-family: var(--ff-display); font-size: clamp(32px, 5vw, 44px);
-      font-weight: 900; letter-spacing: .1em; margin-bottom: 16px; line-height: 1.2;
-    }
-    [data-theme="dark"] .hero h1 {
-      background: linear-gradient(135deg, #f5f0e6 0%, #e0dace 40%, var(--gold) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    [data-theme="light"] .hero h1 {
-      background: linear-gradient(135deg, #141413 0%, #2d2d28 40%, #1B365D 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .hero-sub {
-      font-family: var(--ff-mono); font-size: 11px;
-      letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
-    }
-    .hero-poet {
-      font-family: var(--ff-display); font-size: 15px;
-      letter-spacing: .12em; color: var(--muted);
-      opacity: 0; animation: fadeUp .8s .3s ease forwards;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ===== Section ===== */
-    .section { margin-bottom: 56px; }
-    .section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-    .section-line { flex: 1; height: 1px; }
-    [data-theme="dark"] .section-line { background: linear-gradient(90deg, transparent, rgba(212,168,75,.2), transparent); }
-    [data-theme="light"] .section-line { background: linear-gradient(90deg, transparent, rgba(160,130,90,.2), transparent); }
-    .section-label {
-      font-family: var(--ff-display); font-size: 12px; font-weight: 700;
-      letter-spacing: .18em; text-transform: uppercase; white-space: nowrap;
-      color: var(--muted); display: flex; align-items: center; gap: 8px;
-    }
-    .section-dot { width: 5px; height: 5px; border-radius: 50%; }
-    [data-theme="dark"] .section-dot { background: var(--gold); opacity: .6; }
-    [data-theme="light"] .section-dot { background: var(--gold); opacity: .5; }
-
-    /* ===== Cards ===== */
-    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-
-    .card {
-      display: flex; flex-direction: column; border-radius: 16px;
-      padding: 24px 20px 20px; text-decoration: none; cursor: pointer;
-      position: relative; overflow: hidden;
-      transition: all .35s cubic-bezier(.4,0,.2,1);
-    }
-    /* 纸张底色 — 暖色调 */
-    [data-theme="dark"] .card {
-      background: #252220;
-      border: 1px solid rgba(212,168,75,.1); color: inherit;
-    }
-    [data-theme="light"] .card {
-      background: linear-gradient(135deg, #fdfbf6 0%, #f8f4ec 100%);
-      border: 1px solid rgba(180,160,120,.15); color: inherit;
-      box-shadow: 0 1px 4px rgba(140,120,80,.08);
-    }
-    /* 纸纹理：暖色横线 */
-    .card::before {
-      content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
-      background: repeating-linear-gradient(
-        transparent, transparent 27px,
-        rgba(160,130,90,.06) 27px, rgba(160,130,90,.06) 28px
-      );
-    }
-    [data-theme="dark"] .card::before {
-      background: repeating-linear-gradient(
-        transparent, transparent 27px,
-        rgba(212,168,75,.04) 27px, rgba(212,168,75,.04) 28px
-      );
-    }
-    /* 右下角水印字符 */
-    .card::after {
-      content: ""; position: absolute; right: -8px; bottom: -8px;
-      font-size: 72px; font-weight: 900; opacity: 0;
-      transition: opacity .4s; pointer-events: none; line-height: 1; z-index: 0;
-    }
-    [data-theme="dark"] .card::after { color: var(--gold); }
-    [data-theme="light"] .card::after { color: var(--text-primary); }
-    .card:hover::after { opacity: .03; }
-
-    .card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(212,168,75,.2);
-      box-shadow: 0 8px 32px rgba(100,80,40,.2);
-    }
-    [data-theme="light"] .card:hover {
-      border-color: rgba(180,140,80,.25);
-      box-shadow: 0 8px 32px rgba(140,110,60,.1);
-    }
-
-    .card-icon {
-      width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-      border-radius: 10px; margin-bottom: 14px; position: relative; z-index: 1;
-      transition: all .3s cubic-bezier(.4,0,.2,1);
-    }
-    .card-icon svg {
-      width: 20px; height: 20px; stroke-width: 1.8; fill: none; stroke: currentColor;
-    }
-    [data-theme="dark"] .card-icon { background: rgba(212,168,75,.08); color: var(--gold); }
-    [data-theme="light"] .card-icon { background: rgba(27,54,93,.06); color: var(--gold); }
-    .card:hover .card-icon { transform: scale(1.08); }
-
-    .card h3 {
-      font-family: var(--ff-display); font-size: 15px; font-weight: 900;
-      margin-bottom: 6px; position: relative; z-index: 1;
-      transition: color .25s;
-    }
-    [data-theme="dark"] .card h3 { color: var(--text-primary); }
-    [data-theme="light"] .card h3 { color: var(--text-primary); }
-    .card:hover h3 { color: var(--gold); }
-
-    .card p {
-      font-size: 12px; line-height: 1.6; color: var(--muted);
-      position: relative; z-index: 1;
-    }
-
-    /* 各卡片水印字符 */
-    .card--math::after { content: "∑"; }
-    .card--mul::after { content: "×"; }
-    .card--cmp::after { content: "≷"; }
-    .card--tian::after { content: "字"; font-size: 64px; }
-    .card--py::after { content: "ㄅ"; font-size: 64px; }
-    .card--write::after { content: "文"; font-size: 64px; }
-    .card--grid::after { content: "▦"; }
-    .card--sched::after { content: "课"; font-size: 64px; }
-    .card--routine::after { content: "时"; font-size: 64px; }
-    .card--todo::after { content: "✓"; }
-    .card--read::after { content: "读"; font-size: 64px; }
-    .card--menu::after { content: "食"; font-size: 64px; }
-    .card--check::after { content: "卡"; font-size: 64px; }
-    .card--score::after { content: "绩"; font-size: 64px; }
-    .card--plan::after { content: "划"; font-size: 64px; }
-
-    /* Footer */
-    .footer {
-      text-align: center; padding: 40px 0 20px;
-      font-family: var(--ff-mono); font-size: 11px;
-      letter-spacing: .1em; color: var(--muted); opacity: .5;
-    }
-
-    @media (max-width: 700px) {
-      .cards { grid-template-columns: 1fr 1fr; gap: 10px; }
-      .wrapper { padding: 72px 16px 40px; }
-      .card { padding: 20px 16px 16px; }
-      .card-icon { width: 36px; height: 36px; }
-      .card h3 { font-size: 14px; }
-    }
-    @media (max-width: 420px) {
-      .cards { grid-template-columns: 1fr; }
-    }
+    [data-theme="dark"] .theme-toggle { background: var(--bg-soft); border-color: #27272a; }
+    .theme-toggle:hover { border-color: var(--primary); color: var(--primary); }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid var(--line); margin-bottom: 60px; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
+    .nav-brand svg { width: 28px; height: 28px; color: var(--primary); }
+    .nav-brand span { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+    .hero { text-align: center; margin-bottom: 64px; padding: 40px 0; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; background: rgba(22,163,74,.08); border: 1px solid rgba(22,163,74,.15); font-size: 13px; font-weight: 500; color: var(--primary); margin-bottom: 24px; }
+    [data-theme="dark"] .hero-badge { background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.25); }
+    .hero h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; margin-bottom: 16px; color: var(--text-primary); }
+    .hero h1 span { background: linear-gradient(135deg, var(--primary) 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: 18px; color: var(--muted); max-width: 500px; margin: 0 auto 32px; line-height: 1.6; }
+    .stats { display: flex; justify-content: center; gap: 48px; margin-top: 32px; }
+    .stat { text-align: center; }
+    .stat-value { font-size: 28px; font-weight: 800; color: var(--primary); letter-spacing: -.02em; }
+    .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .category-section { margin-bottom: 56px; }
+    .category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .category-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(22,163,74,.08); color: var(--primary); }
+    [data-theme="dark"] .category-icon { background: rgba(34,197,94,.1); color: #22c55e; }
+    .category-icon svg { width: 18px; height: 18px; stroke-width: 1.8; fill: none; stroke: currentColor; }
+    .category-title { font-size: 20px; font-weight: 700; color: var(--text-primary); letter-spacing: -.01em; }
+    .category-count { font-size: 12px; color: var(--muted); background: var(--bg-soft); padding: 4px 10px; border-radius: 999px; }
+    [data-theme="dark"] .category-count { background: rgba(255,255,255,.05); }
+    .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .tool-card { display: flex; flex-direction: column; padding: 20px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); text-decoration: none; color: inherit; transition: all .2s ease; cursor: pointer; }
+    [data-theme="dark"] .tool-card { background: var(--bg-soft); }
+    .tool-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,.05); transform: translateY(-2px); }
+    [data-theme="dark"] .tool-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.3); }
+    .tool-card-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; margin-bottom: 12px; background: rgba(22,163,74,.08); color: var(--primary); }
+    [data-theme="dark"] .tool-card-icon { background: rgba(34,197,94,.1); color: #22c55e; }
+    .tool-card-icon svg { width: 20px; height: 20px; stroke-width: 1.8; fill: none; stroke: currentColor; }
+    .tool-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
+    .tool-card p { font-size: 13px; color: var(--muted); line-height: 1.5; flex: 1; }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 64px; padding-top: 48px; border-top: 1px solid var(--line); }
+    .feature-card { text-align: center; padding: 24px; }
+    .feature-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; margin: 0 auto 16px; background: rgba(22,163,74,.08); color: var(--primary); }
+    [data-theme="dark"] .feature-icon { background: rgba(34,197,94,.1); color: #22c55e; }
+    .feature-icon svg { width: 24px; height: 24px; stroke-width: 1.8; fill: none; stroke: currentColor; }
+    .feature-card h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+    .feature-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .footer { text-align: center; padding: 32px 0; border-top: 1px solid var(--line); margin-top: 48px; }
+    .footer p { font-size: 13px; color: var(--muted); }
+    @media (max-width: 900px) { .tools-grid { grid-template-columns: repeat(2, 1fr); } .features-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .stats { flex-direction: column; gap: 24px; } .hero h1 { font-size: 32px; } .hero-sub { font-size: 16px; } .theme-toggle { top: 12px; right: 12px; width: 36px; height: 36px; } }
+    @media (max-width: 640px) { .container { padding: 0 16px; } .hero { padding: 24px 0; margin-bottom: 40px; } .tools-grid { grid-template-columns: 1fr; } .tool-card { padding: 16px; min-height: 80px; } .category-header { gap: 10px; } .category-title { font-size: 18px; } }
   </style>
 </head>
 <body>
   <button class="theme-toggle" id="themeToggle" title="切换主题">&#9788;</button>
-
-  <div class="wrapper">
-    <div class="hero">
-      <div class="hero-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
-          <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
-        </svg>
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="nav-brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+        <span>PaperKit</span>
+      </a>
+    </nav>
+    <section class="hero">
+      <div class="hero-badge">100% 免费 · 浏览器运行</div>
+      <h1>纸间小印迹<br><span style="font-size:0.5em;font-weight:600;opacity:.7">打印工具集</span></h1>
+      <p class="hero-sub">口算练习、田字格、课程表等实用工具，打开即用，支持 A4 打印 / 导出 PDF</p>
+      <div class="stats">
+        <div class="stat"><div class="stat-value">15+</div><div class="stat-label">工具可用</div></div>
+        <div class="stat"><div class="stat-value">100%</div><div class="stat-label">隐私安全</div></div>
+        <div class="stat"><div class="stat-value">0</div><div class="stat-label">需要注册</div></div>
       </div>
-      <h1>纸上时光</h1>
-      <p class="hero-sub">MathChild · Print Tools</p>
-      <p class="hero-poet" id="heroSubtitle"></p>
-    </div>
-
-    <!-- 算术手札 -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-line"></div>
-        <div class="section-label"><span class="section-dot"></span>算术手札</div>
-        <div class="section-line"></div>
+    </section>
+    <section class="category-section">
+      <div class="category-header"><div class="category-icon"><svg viewBox="0 0 24 24"><path d="M4.5 3v18M12 3v18M19.5 3v18"/></svg></div><h2 class="category-title">算术手札</h2><span class="category-count">3 个工具</span></div>
+      <div class="tools-grid">
+        <a href="arithmetic.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><path d="M4.5 3v18M12 3v18M19.5 3v18M3 7.5h4M3 12h4M3 16.5h4M16 7.5h5M16 12h5M16 16.5h5M7.5 3h9M7.5 21h9"/></svg></div><h3>口算练习</h3><p>加减乘除，三档难度，A4 打印即练</p></a>
+        <a href="multiplication.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg></div><h3>九九乘法表</h3><p>乘法口诀，可显示/隐藏答案</p></a>
+        <a href="compare.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/><path d="M15 5l-7 7 7 7" opacity=".4"/></svg></div><h3>比大小</h3><p>两数比较，填 > < =</p></a>
       </div>
-      <div class="cards">
-        <a href="arithmetic.html" class="card card--math">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M4.5 3v18M12 3v18M19.5 3v18M3 7.5h4M3 12h4M3 16.5h4M16 7.5h5M16 12h5M16 16.5h5M7.5 3h9M7.5 21h9"/></svg>
-          </div>
-          <h3>口算练习</h3>
-          <p>加减乘除，三档难度，A4 打印即练</p>
-        </a>
-        <a href="multiplication.html" class="card card--mul">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg>
-          </div>
-          <h3>九九乘法表</h3>
-          <p>乘法口诀，可显示/隐藏答案</p>
-        </a>
-        <a href="compare.html" class="card card--cmp">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/><path d="M15 5l-7 7 7 7" opacity=".4"/></svg>
-          </div>
-          <h3>比大小</h3>
-          <p>两数比较，填 &gt; &lt; =</p>
-        </a>
+    </section>
+    <section class="category-section">
+      <div class="category-header"><div class="category-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg></div><h2 class="category-title">纸上拾趣</h2><span class="category-count">3 个工具</span></div>
+      <div class="tools-grid">
+        <a href="tianzige.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12" opacity=".4"/></svg></div><h3>田字格</h3><p>练好汉字，一笔一划</p></a>
+        <a href="pinyin-paper.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="10" x2="21" y2="10" opacity=".5"/><line x1="3" y1="14" x2="21" y2="14" opacity=".5"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div><h3>拼音练习纸</h3><p>四线三格，练好拼音基础</p></a>
+        <a href="writing-paper.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21" opacity=".3"/><line x1="15" y1="3" x2="15" y2="21" opacity=".3"/><line x1="3" y1="9" x2="21" y2="9" opacity=".3"/><line x1="3" y1="15" x2="21" y2="15" opacity=".3"/></svg></div><h3>作文稿纸</h3><p>方格稿纸，练习写作</p></a>
       </div>
-    </div>
-
-    <!-- 纸上拾趣 -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-line"></div>
-        <div class="section-label"><span class="section-dot"></span>纸上拾趣</div>
-        <div class="section-line"></div>
+    </section>
+    <section class="category-section">
+      <div class="category-header"><div class="category-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/></svg></div><h2 class="category-title">晨课暮习</h2><span class="category-count">3 个工具</span></div>
+      <div class="tools-grid">
+        <a href="grid-paper.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg></div><h3>格子纸</h3><p>数学画图，坐标练习</p></a>
+        <a href="schedule.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div><h3>课程表</h3><p>学校课程安排，打印贴墙</p></a>
+        <a href="daily-routine.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div><h3>作息时间表</h3><p>规律作息，健康成长</p></a>
       </div>
-      <div class="cards">
-        <a href="tianzige.html" class="card card--tian">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12" opacity=".4"/></svg>
-          </div>
-          <h3>田字格</h3>
-          <p>练好汉字，一笔一划</p>
-        </a>
-        <a href="pinyin-paper.html" class="card card--py">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="10" x2="21" y2="10" opacity=".5"/><line x1="3" y1="14" x2="21" y2="14" opacity=".5"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-          </div>
-          <h3>拼音练习纸</h3>
-          <p>四线三格，练好拼音基础</p>
-        </a>
-        <a href="writing-paper.html" class="card card--write">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21" opacity=".3"/><line x1="15" y1="3" x2="15" y2="21" opacity=".3"/><line x1="3" y1="9" x2="21" y2="9" opacity=".3"/><line x1="3" y1="15" x2="21" y2="15" opacity=".3"/></svg>
-          </div>
-          <h3>作文稿纸</h3>
-          <p>方格稿纸，练习写作</p>
-        </a>
+    </section>
+    <section class="category-section">
+      <div class="category-header"><div class="category-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg></div><h2 class="category-title">手边好用</h2><span class="category-count">3 个工具</span></div>
+      <div class="tools-grid">
+        <a href="todo-list.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg></div><h3>待办清单</h3><p>输入事项，打印 A4，逐项打勾</p></a>
+        <a href="reading-notes.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div><h3>读书笔记</h3><p>摘录好句，写读后感，打印存档</p></a>
+        <a href="weekly-menu.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><line x1="7" y1="2" x2="7" y2="13"/><path d="M21 15a2 2 0 01-2 2h-3l-1 5H7l-1-5H4a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><h3>每周菜单</h3><p>安排三餐，打印贴冰箱</p></a>
       </div>
-    </div>
-
-    <!-- 晨课暮习 -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-line"></div>
-        <div class="section-label"><span class="section-dot"></span>晨课暮习</div>
-        <div class="section-line"></div>
+    </section>
+    <section class="category-section">
+      <div class="category-header"><div class="category-icon"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div><h2 class="category-title">学习足迹</h2><span class="category-count">3 个工具</span></div>
+      <div class="tools-grid">
+        <a href="practice-log.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg></div><h3>每日打卡</h3><p>记录练习时光，见证每日努力</p></a>
+        <a href="score-tracker.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div><h3>成绩档案</h3><p>跟踪正确率变化，看见进步轨迹</p></a>
+        <a href="study-plan.html" class="tool-card"><div class="tool-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><path d="M9 16l2 2 4-4"/></svg></div><h3>周计划</h3><p>规划每周学习，养成良好习惯</p></a>
       </div>
-      <div class="cards">
-        <a href="grid-paper.html" class="card card--grid">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
-          </div>
-          <h3>格子纸</h3>
-          <p>数学画图，坐标练习</p>
-        </a>
-        <a href="schedule.html" class="card card--sched">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
-          </div>
-          <h3>课程表</h3>
-          <p>学校课程安排，打印贴墙</p>
-        </a>
-        <a href="daily-routine.html" class="card card--routine">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-          </div>
-          <h3>作息时间表</h3>
-          <p>规律作息，健康成长</p>
-        </a>
-      </div>
-    </div>
-
-    <!-- 手边好用 -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-line"></div>
-        <div class="section-label"><span class="section-dot"></span>手边好用</div>
-        <div class="section-line"></div>
-      </div>
-      <div class="cards">
-        <a href="todo-list.html" class="card card--todo">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
-          </div>
-          <h3>待办清单</h3>
-          <p>输入事项，打印 A4，逐项打勾</p>
-        </a>
-        <a href="reading-notes.html" class="card card--read">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-          </div>
-          <h3>读书笔记</h3>
-          <p>摘录好句，写读后感，打印存档</p>
-        </a>
-        <a href="weekly-menu.html" class="card card--menu">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><line x1="7" y1="2" x2="7" y2="13"/><path d="M21 15a2 2 0 01-2 2h-3l-1 5H7l-1-5H4a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-          </div>
-          <h3>每周菜单</h3>
-          <p>安排三餐，打印贴冰箱</p>
-        </a>
-      </div>
-    </div>
-
-    <!-- 学习足迹 -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-line"></div>
-        <div class="section-label"><span class="section-dot"></span>学习足迹</div>
-        <div class="section-line"></div>
-      </div>
-      <div class="cards">
-        <a href="practice-log.html" class="card card--check">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
-          </div>
-          <h3>每日打卡</h3>
-          <p>记录练习时光，见证每日努力</p>
-        </a>
-        <a href="score-tracker.html" class="card card--score">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
-          </div>
-          <h3>成绩档案</h3>
-          <p>跟踪正确率变化，看见进步轨迹</p>
-        </a>
-        <a href="study-plan.html" class="card card--plan">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><path d="M9 16l2 2 4-4"/></svg>
-          </div>
-          <h3>周计划</h3>
-          <p>规划每周学习，养成良好习惯</p>
-        </a>
-      </div>
-    </div>
-
-    <div class="footer">Made with &#10084; for &#31216;&#19978;&#26102;&#20809;</div>
+    </section>
+    <section class="features-grid" id="features">
+      <div class="feature-card"><div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><h3>100% 隐私安全</h3><p>所有工具在浏览器本地运行，数据不会上传到任何服务器</p></div>
+      <div class="feature-card"><div class="feature-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><h3>极速体验</h3><p>无需服务器响应，现代浏览器 API 即时处理</p></div>
+      <div class="feature-card"><div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><h3>完全免费</h3><p>无订阅、无限制、无需注册，永久免费使用</p></div>
+    </section>
+    <footer class="footer"><p>Made with &#10084; for PaperKit</p></footer>
   </div>
-
   <script>
-    (function() {
-      var el = document.getElementById('heroSubtitle');
-      if (!el) return;
-      var now = new Date();
-      var m = now.getMonth() + 1;
-      var d = now.getDate();
-      var holidays = [
-        [1,1,'新年伊始，万象更新'],[2,14,'以笔为媒，写一封春天的情书'],
-        [3,8,'春风十里，写给每一个她'],[4,1,'纸上的世界，比远方更远'],
-        [5,1,'劳动最光荣，落笔见真章'],[5,4,'青春正当时，莫负好时光'],
-        [6,1,'童年是一本写不完的书'],[9,10,'师恩如墨，润物无声'],
-        [10,1,'山河远阔，纸上可游'],[12,25,'岁末温暖，纸上可寄']
-      ];
-      var lunarH = [
-        [2,17,'元宵灯火暖，落笔亦生花'],[6,19,'粽香端午，笔墨安康'],
-        [8,25,'月下读书，清风自来'],[10,25,'登高望远，落笔从容']
-      ];
-      var solarTerms = [
-        [1,5,'寒梅初绽，正好读书'],[1,20,'岁寒知松柏，纸上见真心'],
-        [2,3,'春风又绿江南岸，落笔生花正当时'],[2,18,'好雨知时节，润笔也润心'],
-        [3,5,'春雷一声万物醒，提笔写字意气生'],[3,20,'昼夜平分，笔墨均好'],
-        [4,4,'清明时节，且读且思'],[4,20,'谷雨春茶香，提笔写文章'],
-        [5,5,'夏日初长，正是读书好时节'],[5,21,'小满即安，落笔从容'],
-        [6,5,'忙里偷闲读一页，芒种不忙心自宽'],[6,21,'蝉鸣夏日长，正好读书忙'],
-        [7,7,'蝉声里写作业，也算盛夏一景'],[7,22,'暑气蒸腾，纸上自有清凉'],
-        [8,7,'秋风起，笔墨香'],[8,23,'暑去秋来，读书正当时'],
-        [9,7,'白露为霜，书中自有好时光'],[9,22,'秋色平分，落笔有声'],
-        [10,8,'寒露凝珠，书香暖心'],[10,23,'霜叶红于二月花，落笔亦可胜春华'],
-        [11,7,'围炉读书，温暖一冬'],[11,22,'窗外小雪，纸上温暖'],
-        [12,6,'大雪纷飞，且在纸上落一场'],[12,21,'长夜漫漫，书中好入梦']
-      ];
-      var seasons = [[3,5,'春风十里，不如落笔有声'],[6,5,'蝉鸣夏日长，正好读书忙'],[9,5,'秋风起，笔墨香'],[12,5,'围炉读书，温暖一冬']];
-      var text = null;
-      for (var i = 0; i < holidays.length; i++) { if (m===holidays[i][0] && d===holidays[i][1]) { text=holidays[i][2]; break; } }
-      if (!text) for (var j = 0; j < lunarH.length; j++) { if (m===lunarH[j][0] && d===lunarH[j][1]) { text=lunarH[j][2]; break; } }
-      if (!text) {
-        var best = 999;
-        for (var k = 0; k < solarTerms.length; k++) {
-          var dist = Math.abs((m*100+d)-(solarTerms[k][0]*100+solarTerms[k][1]));
-          if (dist < best) { best = dist; text = solarTerms[k][2]; }
-        }
-      }
-      if (!text) {
-        for (var s = seasons.length-1; s >= 0; s--) { if (m >= seasons[s][0]) { text = seasons[s][2]; break; } }
-        if (!text) text = seasons[0][2];
-      }
-      el.textContent = text;
-    })();
-
     (function() {
       var toggle = document.getElementById('themeToggle');
       var html = document.documentElement;

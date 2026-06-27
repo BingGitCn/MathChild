@@ -252,7 +252,7 @@ function flashTip(msg) {
     if (!tip) { 
         tip = document.createElement("div"); 
         tip.id = "flashTip"; 
-        tip.style.cssText = "position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#c8324c;color:#fff;padding:10px 20px;border-radius:10px;z-index:200;font-size:14px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.3)"; 
+        tip.style.cssText = "position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#16a34a;color:#fff;padding:10px 20px;border-radius:10px;z-index:200;font-size:14px;font-weight:700;box-shadow:0 4px 14px rgba(22,163,74,.3)"; 
         document.body.appendChild(tip); 
     } 
     tip.textContent = msg; tip.style.opacity = "1"; 
