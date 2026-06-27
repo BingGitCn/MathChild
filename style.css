@@ -147,9 +147,6 @@ body::after {
   cursor: pointer;
   transition: all .2s cubic-bezier(.4,0,.2,1);
 }
-  cursor: pointer;
-  transition: all .2s;
-}
 .ghost-btn:hover:not(:disabled) { background: rgba(255,255,255,.06); border-color: var(--line); }
 .ghost-btn:disabled { opacity: .35; cursor: not-allowed; }
 .ghost-btn svg { flex-shrink: 0; }
@@ -740,7 +737,7 @@ body.show-ans .q-v .ans-wrap {
 
 @media print {
   html, body { background: #fff; }
-  body::before, .topbar, .panel, .overlay, .menu-btn { display: none !important; }
+  body::before, body::after, .topbar, .panel, .overlay, .menu-btn { display: none !important; }
 
   .main { margin: 0; padding: 0; }
   .output { padding: 0; gap: 0; display: block; }
@@ -771,6 +768,7 @@ body.show-ans .q-v .ans-wrap {
     break-after: page;
   }
   .paper:last-child { page-break-after: auto; break-after: auto; }
+  .paper::before { display: none !important; }
 
   .ans-wrap { color: var(--crimson-deep); }
 }

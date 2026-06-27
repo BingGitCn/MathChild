@@ -339,7 +339,7 @@ body::after {
 }
 @media print {
   html, body { background: #fff; }
-  body::before, .topbar { display: none !important; }
+  body::before, body::after, .topbar { display: none !important; }
   .main { margin: 0; padding: 0; }
   .output { padding: 0; gap: 0; display: block; }
   .paper-stage {
@@ -363,4 +363,5 @@ body::after {
     break-after: page;
   }
   .paper:last-child { page-break-after: auto; break-after: auto; }
+  .paper::before { display: none !important; }
 }
